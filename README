@@ -1,0 +1,18 @@
+
+	All provided projects are developed with eclipse.
+	See wiki for more information...
+
+
+android_toolbox (library)
+
+	The main android tool collection.
+
+number_picker (library)
+
+	Port of androids native number picker code. It's bundled in an
+	own project because it contains some "heavy" image resources.
+
+showcase (app)
+
+	Project which demonstrates the most interesting tools.
+
