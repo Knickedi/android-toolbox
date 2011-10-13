@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<de.viktorreiser.toolbox.widget.SwipeableHiddenView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:layout_width="fill_parent">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:padding="10dip">
+
+			<TextView
+				android:id="@+id/title"
+				android:text="Name"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:singleLine="true"
+				android:ellipsize="end"></TextView>
+
+			<TextView
+				android:id="@+id/link"
+				android:text="request URL"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:singleLine="true"
+				android:ellipsize="end"></TextView>
+
+	</LinearLayout>
+
+</de.viktorreiser.toolbox.widget.SwipeableHiddenView>

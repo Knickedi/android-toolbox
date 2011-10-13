@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+	<declare-styleable name="ValidatedDialogPreference">
+		<attr name="onValidate" format="string|reference" />
+	</declare-styleable>
+	
+	<declare-styleable name="SambaAutoComplete">
+		<attr name="showFiles" format="boolean|reference" />
+		<attr name="sambaUser" format="string|reference" />
+		<attr name="sambaPassword" format="string|reference" />
+		<attr name="deniedAccessText" format="string|reference" />
+		<attr name="deniedAccessImage" format="reference" />
+	</declare-styleable>
+	
+	<declare-styleable name="PathAutoComplete">
+		<attr name="showFiles" />
+		<attr name="rootDir" format="string|reference" />
+	</declare-styleable>
+	
+	<declare-styleable name="MultiSelectListPreference">
+		<attr name="valueSeparator" format="string|reference" />
+	</declare-styleable>
+	
+	<declare-styleable name="ViewStateFlipper">
+		<attr name="animationIn" format="reference" />
+		<attr name="animationOut" format="reference" />
+		<attr name="animationReverseIn" format="reference" />
+		<attr name="animationReverseOut" format="reference" />
+	</declare-styleable>
+	
+	<declare-styleable name="TabManagerView">
+		<attr name="tabLayout" format="reference" />
+		<attr name="tabSeparator" format="reference" />
+		<attr name="tabContentseparator" format="reference" />
+		<attr name="tabScrollEdgeColor" format="color|reference" />
+		<attr name="tabScrollEdgeWidth" format="dimension|reference" />
+		<attr name="tabMinimumWidth" format="dimension|reference" />
+	</declare-styleable>
+	
+	<declare-styleable name="SwipeableListItem">
+		<attr name="detatchFromList" format="reference|boolean" />
+		<attr name="animationSpeed" format="reference|integer" />
+		<attr name="startOffset" format="reference|dimension"/>
+		<attr name="stopOffset" format="reference|dimension" />
+		<attr name="stickyStart" format="reference|boolean" />
+		<attr name="swipeOnClick" format="reference|boolean" />
+		<attr name="swipeOnLongClick" format="reference|boolean" />
+		<attr name="hideListSelector" format="reference|boolean" />
+	</declare-styleable>
+    
+</resources>

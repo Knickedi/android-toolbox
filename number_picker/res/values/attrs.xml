@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+	<declare-styleable name="NumberPicker">
+		<attr name="rangeStart" format="integer|reference" />
+		<attr name="rangeEnd" format="integer|reference" />
+		<attr name="speed" format="integer|reference" />
+		<attr name="current" format="integer|reference" />
+		<attr name="android:orientation" />
+	</declare-styleable>
+
+</resources>
