@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
 import de.viktorreiser.toolbox.widget.NumberPicker;
-import de.viktorreiser.toolbox.preference.ValidatedDialogPreference;
 
 /**
  * Integer number preference which extends {@link ValidatedDialogPreference}.<br>
@@ -27,7 +27,7 @@ import de.viktorreiser.toolbox.preference.ValidatedDialogPreference;
  * 
  * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
  */
-public class NumberPickerPreference extends ValidatedDialogPreference {
+public class NumberPickerPreference extends DialogPreference {
 	
 	// PRIVATE ====================================================================================
 	
@@ -81,11 +81,6 @@ public class NumberPickerPreference extends ValidatedDialogPreference {
 	}
 	
 	// OVERRIDDEN =================================================================================
-	
-	public NumberPickerPreference(Context context) {
-		super(context);
-		initialize(null);
-	}
 	
 	public NumberPickerPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);

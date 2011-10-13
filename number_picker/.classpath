@@ -3,6 +3,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry excluding="de/viktorreiser/toolbox/preference/MultiSelectListPreference.java|de/viktorreiser/toolbox/preference/PathDialogPreference.java|de/viktorreiser/toolbox/preference/ValidatedEditTextPreference.java|de/viktorreiser/toolbox/app/|de/viktorreiser/toolbox/content/|de/viktorreiser/toolbox/graphics/drawable/|de/viktorreiser/toolbox/lang/|de/viktorreiser/toolbox/net/|de/viktorreiser/toolbox/os/|de/viktorreiser/toolbox/util/|de/viktorreiser/toolbox/widget/" kind="src" path="Android Toolbox_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
