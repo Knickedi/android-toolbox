@@ -1,9 +1,5 @@
 package de.viktorreiser.toolbox.widget;
 
-import de.viktorreiser.toolbox.R;
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.util.AttributeSet;
 import android.widget.ListView;
 
 /**
@@ -227,34 +223,6 @@ public interface SwipeableListItem {
 						+ " setup object and try to modify it after that.");
 			}
 		}
-		
-		/**
-		 * Call this to initialize your setup implementation from XML.
-		 * 
-		 * @param context
-		 * @param attrs
-		 *            XML attributes
-		 */
-		protected void setupXmlAttributes(Context context, AttributeSet attrs) {
-			TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeableListItem);
-			
-			setAnimationSpeed(a.getInt(
-					R.styleable.SwipeableListItem_animationSpeed, animationSpeed));
-			setStartOffset(a.getDimensionPixelSize(
-					R.styleable.SwipeableListItem_startOffset, startOffset));
-			setStopOffset(a.getDimensionPixelSize(
-					R.styleable.SwipeableListItem_stopOffset, stopOffset));
-			setStickyStart(a.getBoolean(
-					R.styleable.SwipeableListItem_stickyStart, stickyStart));
-			setHideSelectorOnStart(!a.getBoolean(
-					R.styleable.SwipeableListItem_hideListSelector, !dontHideSelector));
-			setSwipeOnClick(a.getBoolean(
-					R.styleable.SwipeableListItem_swipeOnClick, consumeClick));
-			setSwipeOnClick(a.getBoolean(
-					R.styleable.SwipeableListItem_swipeOnLongClick, consumeLongClick));
-			
-			a.recycle();
-		}
 	}
 	
 	
@@ -348,7 +316,8 @@ public interface SwipeableListItem {
 		 * It's like view is loosing focus. It should clean its state which was caused by previous
 		 * swipe interaction. Like {@link #CANCEL} this event is soft.
 		 */
-		CLOSE
+		CLOSE,
+		RESTORE
 	}
 	
 	
@@ -370,7 +339,8 @@ public interface SwipeableListItem {
 	 *         actions - return of {@code true} on {@link SwipeEvent#START} will begin the swipe
 	 *         action immediately and consume any clicks and long clicks instantly
 	 */
-	public boolean onViewSwipe(ListView listView, SwipeEvent event, int offset, int position);
+	public boolean onViewSwipe(ListView listView, SwipeEvent event, int offset, int position,
+			SwipeableListItem restoreItem);
 	
 	/**
 	 * Reset (immediately) any prior swipe state so it looks like this view hasn't ever been swiped.<br>

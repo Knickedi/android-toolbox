@@ -68,6 +68,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	
 	private final Handler mHandler;
 	private final Runnable mRunnable = new Runnable() {
+		@Override
 		public void run() {
 			if (mIncrement) {
 				changeCurrent(mCurrent + 1);
@@ -147,6 +148,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		final java.util.Formatter mFmt = new java.util.Formatter(mBuilder);
 		final Object [] mArgs = new Object [1];
 		
+		@Override
 		public String toString(int value) {
 			mArgs[0] = value;
 			mBuilder.delete(0, mBuilder.length());
@@ -595,6 +597,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	/**
 	 * <i>Overridden for internal use!</i>
 	 */
+	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		/*
 		 * When focus is lost check that the text field has valid values.
@@ -661,6 +664,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	private NumberPickerButton mDecrementButton;
 	
 	private class NumberPickerInputFilter implements InputFilter {
+		@Override
 		public CharSequence filter(CharSequence source, int start, int end,
 				Spanned dest, int dstart, int dend) {
 			if (mDisplayedValues == null) {
@@ -685,6 +689,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		
 		// This doesn't allow for range limits when controlled by a
 		// soft input method!
+		@Override
 		public int getInputType() {
 			return InputType.TYPE_CLASS_NUMBER;
 		}

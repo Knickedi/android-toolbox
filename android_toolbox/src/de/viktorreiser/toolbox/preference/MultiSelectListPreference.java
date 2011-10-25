@@ -122,6 +122,7 @@ public class MultiSelectListPreference extends ListPreference {
 		
 		builder.setMultiChoiceItems(entries, mSelected,
 				new DialogInterface.OnMultiChoiceClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int which, boolean val) {
 						mSelected[which] = val;
 					}

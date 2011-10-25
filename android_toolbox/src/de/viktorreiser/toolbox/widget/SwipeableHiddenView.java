@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
@@ -78,15 +77,11 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	/** Setup for swipeable view. */
 	private HiddenViewSetup mData;
 	
-	/** Default setup for swipeable view (will be used if no setup is given). */
-	private HiddenViewSetup mDefaultData;
-	
 	/** Current item position given by {@link #onViewSwipe}. */
 	private int mCurrentPosition = HiddenViewSetup.INVALID_POSITION;
 	
 	/** Current list view given by {@link #onViewSwipe}. */
 	private ListView mCurrentListView;
-	
 	
 	/** Offset in pixel given by last {@link #onViewSwipe} event. */
 	private int mLastOffset = 0;
@@ -149,8 +144,8 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 * all instances. The view will be shared between them since hidden view won't ever be visible
 	 * in more than one {@link SwipeableHiddenView}.<br>
 	 * <br>
-	 * Always determinate whether {@link #isHiddenViewVisible()} before interacting with the hidden
-	 * view (like performing click actions).<br>
+	 * Always determinate whether {@link #isHiddenViewCovered()} is {@code false} before interacting
+	 * with the hidden view (like performing click actions)!<br>
 	 * When hidden view triggers an action you can use {@link #getCurrentSwipeableHiddenView()},
 	 * {@link #getCurrentListView()} and {@link #getCurrentPosition()} to determinate on which
 	 * {@link SwipeableHiddenView}, list view and list item the action is performed.<br>
@@ -178,6 +173,9 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		/** Interpolator for swipe open animation see {@link #setAnimation(Interpolator)}). */
 		protected Interpolator closeAnimation = openAnimation;
+		
+		/** Interrupt offset see {@link #setAnimationInteruptionOffset(float)}. */
+		protected float interruptOffset = 1f;
 		
 		// PUBLIC ---------------------------------------------------------------------------------
 		
@@ -253,7 +251,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		 * @return {@code true} if hidden view is completely covered or the hidden view is not
 		 *         managed by a {@link SwipeableHiddenView} right now
 		 */
-		public final boolean isHiddenViewCovored() {
+		public final boolean isHiddenViewCovered() {
 			if (currentSwipeableHiddenView != null) {
 				return currentSwipeableHiddenView.isHiddenViewCovered();
 			}
@@ -269,8 +267,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		 */
 		public final void closeHiddenView() {
 			if (currentSwipeableHiddenView != null) {
-				currentSwipeableHiddenView.onViewSwipe(
-						null, SwipeEvent.CLOSE, 0, 0);
+				currentSwipeableHiddenView.onViewSwipe(null, SwipeEvent.CLOSE, 0, 0, null);
 			}
 		}
 		
@@ -393,6 +390,26 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 			openAnimation = animation;
 		}
 		
+		/**
+		 * Offset which is needed to interrupt a running animation (default is {@code 1}).<br>
+		 * <br>
+		 * Consider that that the given value doesn't relate to the visual effect but to the given
+		 * ease function (e.g. if it's linear then the given value is proportional to the visual
+		 * effect).
+		 * 
+		 * @param offset
+		 *            {@code 1} means that you can't stop a swipe animation, {@code 0.5} means that
+		 *            you can't stop it when it already passed half of the animation, {@code 1}
+		 *            means that you can stop a swiped view animation at any time as long it has not
+		 *            finished
+		 */
+		public final void setAnimationInteruptionOffset(float offset) {
+			if (offset < 0f || offset > 1f) {
+				throw new IllegalArgumentException("0 <= offset <= 1 not true");
+			}
+			
+			interruptOffset = offset / 2;
+		}
 		
 		// PRIVATE --------------------------------------------------------------------------------
 		
@@ -430,7 +447,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		 * <br>
 		 * "New hidden view" means a new reference to a view <b>not</b> that the view has been
 		 * updated! Use this method in a extending class when this decides to return an absolutely
-		 * new view so it has to be updated in the swipeable view.
+		 * new view (reference) so it has to be updated in the swipeable view.
 		 */
 		protected final void updateHiddenView() {
 			if (currentSwipeableHiddenView != null) {
@@ -463,12 +480,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		}
 		
 		mData = setup;
-		
-		if (!isHiddenViewCovered()) {
-			mHiddenView = null;
-			bindHiddenView();
-			invalidate();
-		}
 	}
 	
 	/**
@@ -478,22 +489,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	public boolean isHiddenViewSetupSet() {
 		return mData != null;
-	}
-	
-	/**
-	 * Get the hidden view setup which was set.<br>
-	 * <br>
-	 * Will return the default hidden view setup if no setup was set and will lock
-	 * {@link #setHiddenViewSetup(HiddenViewSetup)}.
-	 * 
-	 * @return the current set hidden view setup or the default setup if no setup was set
-	 */
-	public HiddenViewSetup getHiddenViewSetup() {
-		if (mData == null) {
-			
-		}
-		
-		return null;
 	}
 	
 	/**
@@ -548,42 +543,74 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 * <i>Overridden for internal use!</i>
 	 */
 	@Override
-	public boolean onViewSwipe(ListView listView, SwipeEvent event, int offset, int position) {
+	public boolean onViewSwipe(ListView listView, SwipeEvent event, int offset, int position,
+			SwipeableListItem restoreItem) {
 		checkRequirements();
 		
+		boolean mayInterruptAnimation = mAnimating && Math.abs(mOffset) < mData.interruptOffset
+				|| mAnimating && !mAnimateForward;
+		
 		if (event == SwipeEvent.START) {
-			mStarted = mAnimating;
+			mStarted = mayInterruptAnimation;
 		}
 		
-		if (!mStarted && (offset <= -mData.startOffset || offset >= mData.startOffset)) {
+		if (!mStarted && (!mAnimating || mayInterruptAnimation)
+				&& Math.abs(offset) >= mData.startOffset) {
 			mStarted = true;
-			
-			if (mData.stickyStart) {
-				mLastOffset = 0;
-			}
+			mLastOffset = mData.stickyStart ? 0 : offset;
 		}
 		
 		switch (event) {
+		case RESTORE:
+			if (restoreItem instanceof SwipeableHiddenView) {
+				SwipeableHiddenView v = (SwipeableHiddenView) restoreItem;
+				
+				mAnimateForward = v.mAnimateForward;
+				mAnimating = v.mAnimating;
+				mAnimationStepTime = v.mAnimationStepTime;
+				mStarted = v.mStarted;
+				mCurrentListView = v.mCurrentListView;
+				mCurrentPosition = v.mCurrentPosition;
+				mLastOffset = v.mLastOffset;
+				mOffset = v.mOffset;
+				
+				bindHiddenView();
+				requestLayout();
+				
+				return true;
+			} else {
+				return false;
+			}
+			
 		case START:
-			mCurrentPosition = position;
-			mCurrentListView = listView;
-			mAnimationHandler.removeCallbacks(mAnimationStep);
-			mAnimating = false;
-			mData.currentSwipeableHiddenView = this;
 			bindHiddenView();
+			
+			if (!mAnimating || mayInterruptAnimation) {
+				mCurrentPosition = position;
+				mCurrentListView = listView;
+				mAnimationHandler.removeCallbacks(mAnimationStep);
+				mAnimating = false;
+				mData.currentSwipeableHiddenView = this;
+			}
 			break;
 		
 		case MOVE:
 			if (mStarted && offset != mLastOffset) {
 				boolean wasCoveredBefore = isHiddenViewCovered();
+				boolean wasVisibleBefore = isHiddenViewVisible();
 				float lastOffset = mOffset;
 				mOffset += 1f * (offset - mLastOffset) / getWidth();
 				
-				calculateAnimationDirectionChange(lastOffset >= 0 && mOffset < 0
-						|| lastOffset < 0 && mOffset >= 0
-						|| Math.abs(lastOffset) - Math.abs(mOffset) < 0);
+				if (wasCoveredBefore || wasVisibleBefore) {
+					// manual direction change, calculation avoids sticky start
+					mAnimateForward = wasCoveredBefore;
+				} else {
+					calculateAnimationDirectionChange(lastOffset >= 0 && mOffset < 0
+							|| lastOffset < 0 && mOffset >= 0
+							|| Math.abs(lastOffset) - Math.abs(mOffset) < 0);
+				}
 				
-				if (wasCoveredBefore && !isHiddenViewCovered()) {
+				if (wasCoveredBefore != isHiddenViewCovered()) {
 					requestLayout();
 				}
 				
@@ -612,7 +639,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		case CLICK:
 		case LONG_CLICK:
-			mOffset = 0.005f;
+			mOffset = 0.05f;
 			requestLayout();
 			animate(true);
 			break;
@@ -620,7 +647,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		mLastOffset = offset;
 		
-		return mStarted || isHiddenViewVisible();
+		return mStarted;
 	}
 	
 	/**
@@ -716,10 +743,8 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		// ignore that fancy stuff with gravity, padding and margins
 		final int count = getChildCount();
-		
 		for (int i = 0; i < count; i++) {
-			View child = getChildAt(i);
-			child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
+			getChildAt(i).layout(0, 0, getMeasuredWidth(), getMeasuredHeight());
 		}
 	}
 	
@@ -730,6 +755,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	public void dispatchDraw(Canvas canvas) {
 		long drawingTime = getDrawingTime();
 		
+		// L.d("draw  " + mOffset);
 		if (!isHiddenViewCovered()) {
 			canvas.save();
 			
@@ -764,14 +790,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		} else {
 			drawChild(canvas, mOverlayView, drawingTime);
 		}
-	}
-	
-	/**
-	 * <i>Overridden for internal use!</i>
-	 */
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		return mAnimating;
 	}
 	
 	/*
@@ -904,6 +922,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 				if (!mAnimating) {
 					return;
 				}
+				// L.d("animate " + mOffset);
 				
 				float step = (System.nanoTime() - mAnimationStepTime) / 1000000f
 						/ mData.animationSpeed;
@@ -937,8 +956,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		if (attrs == null) {
 			return;
 		}
-		
-		
 	}
 	
 	
