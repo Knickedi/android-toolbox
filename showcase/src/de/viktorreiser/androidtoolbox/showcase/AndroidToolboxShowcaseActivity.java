@@ -13,8 +13,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import de.viktorreiser.androidtoolbox.showcase.bubbledrawable.BubbleDrawableActivity;
 import de.viktorreiser.androidtoolbox.showcase.statustextdrawable.StatusTextDrawableActivity;
+import de.viktorreiser.androidtoolbox.showcase.swipablelistquickaction.SwipeableListQuickActionTypeActivity;
 import de.viktorreiser.androidtoolbox.showcase.swipablelistquickaction.SwipeableListQuickActionActivity;
 
 /**
@@ -26,14 +26,16 @@ public class AndroidToolboxShowcaseActivity extends Activity implements OnItemCl
 	
 	private static final String [] mShowcaseNames = new String [] {
 			"Swipeable List Quick Action",
-			"Status Text Drawable"/*,
-			"Bubble Drawable"*/
+			"Swipeable List Quick Action (different types)",
+			"Status Text Drawable",
+//			"Bubble Drawable"
 	};
 	
 	private static final Class<?> [] mShowcaseActivities = new Class [] {
 			SwipeableListQuickActionActivity.class,
-			StatusTextDrawableActivity.class/*,
-			BubbleDrawableActivity.class*/
+			SwipeableListQuickActionTypeActivity.class,
+			StatusTextDrawableActivity.class,
+//			BubbleDrawableActivity.class
 	};
 	
 	public static final String getActivityTitle(Class<?> activityClass) {
