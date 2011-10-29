@@ -553,8 +553,13 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		if (event == SwipeEvent.START) {
 			mStarted = mayInterruptAnimation;
 		}
-		
-		if (!mStarted && (!mAnimating || mayInterruptAnimation)
+
+		if( isHiddenViewCovered() && ( (mData.swipeDirection == SwipeableSetup.DIRECTION_LEFT && offset > 0) 
+			|| (mData.swipeDirection == SwipeableSetup.DIRECTION_RIGHT && offset < 0) ) ) {
+			//dirty hack for now to keep contextclick from animating in the wrong direction.
+			event = SwipeEvent.CANCEL;
+			mStarted = false;
+		} else if (!mStarted && (!mAnimating || mayInterruptAnimation)
 				&& Math.abs(offset) >= mData.startOffset) {
 			mStarted = true;
 			mLastOffset = mData.stickyStart ? 0 : offset;
@@ -639,7 +644,11 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		case CLICK:
 		case LONG_CLICK:
-			mOffset = 0.05f;
+			if(mData.swipeDirection == SwipeableSetup.DIRECTION_LEFT) {
+				mOffset = -0.05f;
+			} else {
+				mOffset = 0.05f;
+			}
 			requestLayout();
 			animate(true);
 			break;
