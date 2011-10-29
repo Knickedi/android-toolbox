@@ -16,14 +16,14 @@ import android.widget.LinearLayout;
 import de.viktorreiser.toolbox.widget.NumberPicker;
 
 /**
- * Integer number preference which extends {@link ValidatedDialogPreference}.<br>
+ * Integer number preference.<br>
  * <br>
  * XML attributes will be delegated to {@link NumberPicker}.<br>
  * <b>Note</b>: This preference persists an {@code Integer} not a {@code String}.<br>
  * <br>
  * Dependent preferences will be disabled when value is {@code 0}.<br>
  * <br>
- * <i>Depends on</i>: {@link ValidatedDialogPreference}, {@link NumberPicker}
+ * <i>Depends on</i>: {@link NumberPicker}
  * 
  * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
  */
