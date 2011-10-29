@@ -57,6 +57,7 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 			mSetup2.setStartOffset(AndroidUtils.dipToPixel(ctx, 30));
 			mSetup2.setStopOffset(AndroidUtils.dipToPixel(ctx, 50));
 			mSetup2.setSwipeOnLongClick(true);
+			mSetup2.setSwipeDirection(SwipeableSetup.DIRECTION_LEFT);
 			mSetup2.addAction(QuickAction.OPEN,
 					"Open URL", R.drawable.quickaction_urlopen);
 		}
