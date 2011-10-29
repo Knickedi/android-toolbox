@@ -1,5 +1,6 @@
 package de.viktorreiser.toolbox.widget;
 
+import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup.SwipeDirection;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -177,7 +178,20 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		/** Interrupt offset see {@link #setAnimationInteruptionOffset(float)}. */
 		protected float interruptOffset = 1f;
 		
+		/** {@link #setSwipeDirection(int)} (default {@code DIRECTION_BOTH}). */
+		protected SwipeDirection swipeDirection = SwipeDirection.BOTH;
+		
 		// PUBLIC ---------------------------------------------------------------------------------
+		
+		/**
+		 * See {@link #setSwipeDirection(SwipeDirection)}.
+		 * 
+		 * @author Viktor Reiser &lt;<a
+		 *         href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+		 */
+		public enum SwipeDirection {
+			BOTH, LEFT, RIGHT
+		}
 		
 		/**
 		 * Get current {@link SwipeableHiddenView} which is operating on the hidden view.
@@ -411,6 +425,24 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 			interruptOffset = offset / 2;
 		}
 		
+		/**
+		 * Set the allowed directions for swiping the view on and off screen (default is
+		 * {@link SwipeDirection#BOTH}.<br>
+		 * <br>
+		 * <i>Is locked after the setup is attached to a swipeable view.</i>
+		 * 
+		 * @param direction
+		 *            left only, right only or both
+		 */
+		public void setSwipeDirection(SwipeDirection direction) {
+			if (direction == null) {
+				throw new NullPointerException();
+			}
+			
+			checkChangesLock();
+			this.swipeDirection = direction;
+		}
+		
 		// PRIVATE --------------------------------------------------------------------------------
 		
 		/**
@@ -553,13 +585,8 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		if (event == SwipeEvent.START) {
 			mStarted = mayInterruptAnimation;
 		}
-
-		if( isHiddenViewCovered() && ( (mData.swipeDirection == SwipeableSetup.DIRECTION_LEFT && offset > 0) 
-			|| (mData.swipeDirection == SwipeableSetup.DIRECTION_RIGHT && offset < 0) ) ) {
-			//dirty hack for now to keep contextclick from animating in the wrong direction.
-			event = SwipeEvent.CANCEL;
-			mStarted = false;
-		} else if (!mStarted && (!mAnimating || mayInterruptAnimation)
+		
+		if (!mStarted && (!mAnimating || mayInterruptAnimation)
 				&& Math.abs(offset) >= mData.startOffset) {
 			mStarted = true;
 			mLastOffset = mData.stickyStart ? 0 : offset;
@@ -606,6 +633,12 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 				float lastOffset = mOffset;
 				mOffset += 1f * (offset - mLastOffset) / getWidth();
 				
+				if (mData.swipeDirection == SwipeDirection.LEFT && mOffset > 0
+						|| mData.swipeDirection == SwipeDirection.RIGHT && mOffset < 0) {
+					mOffset = 0;
+				}
+
+				
 				if (wasCoveredBefore || wasVisibleBefore) {
 					// manual direction change, calculation avoids sticky start
 					mAnimateForward = wasCoveredBefore;
@@ -644,7 +677,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		case CLICK:
 		case LONG_CLICK:
-			if(mData.swipeDirection == SwipeableSetup.DIRECTION_LEFT) {
+			if (mData.swipeDirection == SwipeDirection.LEFT) {
 				mOffset = -0.05f;
 			} else {
 				mOffset = 0.05f;

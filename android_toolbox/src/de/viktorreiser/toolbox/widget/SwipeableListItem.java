@@ -84,15 +84,6 @@ public interface SwipeableListItem {
 	 * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
 	 */
 	public static abstract class SwipeableSetup {
-
-		/** Used by {@link #setSwipeDirection(int)}. Both directions. */
-		public static final int DIRECTION_BOTH = 0;
-
-		/** Used by {@link #setSwipeDirection(int)}. Left only. */
-		public static final int DIRECTION_LEFT = 1;
-
-		/** Used by {@link #setSwipeDirection(int)}. Right only. */
-		public static final int DIRECTION_RIGHT = 2;
 		
 		// PRIVATE ----------------------------------------------------------------------------
 		
@@ -107,9 +98,6 @@ public interface SwipeableListItem {
 		
 		/** {@link #setAnimationSpeed(int)} always {@code >= 0} (default {@code 500}). */
 		protected int animationSpeed = 500;
-		
-		/** {@link #setSwipeDirection(int)} (default {@code DIRECTION_BOTH}). */
-		protected int swipeDirection = DIRECTION_BOTH;
 		
 		/** {@link #setStickyStart(boolean)} (default {@code true}). */
 		protected boolean stickyStart = true;
@@ -217,20 +205,6 @@ public interface SwipeableListItem {
 		public void setAnimationSpeed(int animationSpeed) {
 			checkChangesLock();
 			this.animationSpeed = animationSpeed < 0 ? 0 : animationSpeed;
-		}
-		
-		/**
-		 * Set the allowed directions for swiping the view on and off screen.<br>
-		 * <br>
-		 * <i>Is locked after the setup is attached to a swipeable view.</i>
-		 * 
-		 * @param direction
-		 *            the direction(s) allowed. Use the constants DIRECTION_BOTH, DIRECTION_LEFT, 
-		 *            and DIRECTION_RIGHT.
-		 */
-		public void setSwipeDirection(int direction) {
-			checkChangesLock();
-			this.swipeDirection = direction;
 		}
 		
 		// PRIVATE ----------------------------------------------------------------------------

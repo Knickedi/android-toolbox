@@ -13,7 +13,7 @@ import de.viktorreiser.androidtoolbox.showcase.swipablelistquickaction.Swipeable
 import de.viktorreiser.toolbox.util.AndroidUtils;
 import de.viktorreiser.toolbox.widget.HiddenQuickActionSetup;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView;
-import de.viktorreiser.toolbox.widget.SwipeableListItem.SwipeableSetup;
+import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup.SwipeDirection;
 import de.viktorreiser.toolbox.widget.SwipeableListView;
 
 public class SwipeableListQuickActionTypeActivity extends Activity {
@@ -44,7 +44,7 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 			mSetup1.setStartOffset(AndroidUtils.dipToPixel(ctx, 30));
 			mSetup1.setStopOffset(AndroidUtils.dipToPixel(ctx, 50));
 			mSetup1.setSwipeOnLongClick(true);
-			mSetup1.setSwipeDirection(SwipeableSetup.DIRECTION_RIGHT);
+			mSetup1.setSwipeDirection(SwipeDirection.RIGHT);
 			mSetup1.addAction(QuickAction.OPEN,
 					"Open URL", R.drawable.quickaction_urlopen);
 			mSetup1.addAction(QuickAction.COPY,
@@ -57,7 +57,7 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 			mSetup2.setStartOffset(AndroidUtils.dipToPixel(ctx, 30));
 			mSetup2.setStopOffset(AndroidUtils.dipToPixel(ctx, 50));
 			mSetup2.setSwipeOnLongClick(true);
-			mSetup2.setSwipeDirection(SwipeableSetup.DIRECTION_LEFT);
+			mSetup2.setSwipeDirection(SwipeDirection.LEFT);
 			mSetup2.addAction(QuickAction.OPEN,
 					"Open URL", R.drawable.quickaction_urlopen);
 		}
