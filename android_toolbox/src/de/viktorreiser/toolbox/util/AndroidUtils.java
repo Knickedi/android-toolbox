@@ -331,9 +331,9 @@ public class AndroidUtils {
 	 * 
 	 * @return height of status bar in pixel
 	 */
-	public static int getTitleBarHeight(Window window) {
-		return getStatusBarHeight(window) - window
-				.findViewById(Window.ID_ANDROID_CONTENT).getMeasuredHeight();
+	public static int getTitleBarHeight(View view) {
+		view.getWindowVisibleDisplayFrame(mStatusBarRect);
+		return mStatusBarRect.top;
 	}
 	
 	/**
@@ -348,7 +348,14 @@ public class AndroidUtils {
 	 * @return offset to top in pixel
 	 */
 	public static int getContentOffsetFromTop(View view) {
-		return view.getRootView().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+		int offset = view.getRootView().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+		
+		if (offset == 0) {
+			view.getWindowVisibleDisplayFrame(mStatusBarRect);
+			offset = mStatusBarRect.top;
+		}
+		
+		return offset;
 	}
 	
 	/**

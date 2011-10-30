@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
@@ -679,7 +678,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 					float moved = Math.abs(mOffset) - Math.abs(mStartOffset);
 					float stop = 1f * mData.stopOffset / getWidth();
 					
-					Log.d("b", moved + " " + stop);
 					animate(Math.abs(mStartOffset) < 0.5f ? moved > stop : moved > -stop);
 				}
 			}

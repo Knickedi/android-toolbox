@@ -1,6 +1,5 @@
 package de.viktorreiser.toolbox.content;
 
-import de.viktorreiser.toolbox.util.L;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -164,11 +163,6 @@ public class NetworkStateBroadcast extends BroadcastReceiver {
 		
 		if (changed) {
 			context.sendBroadcast(new Intent(NETWORK_STATE_ACTION));
-			
-			if (L.isI()) {
-				L.i("Network state: mobile=" + String.valueOf(mMobileConnected)
-						+ " wifi=" + String.valueOf(mWifiConnected));
-			}
 		}
 	}
 }
