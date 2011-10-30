@@ -1,6 +1,5 @@
 package de.viktorreiser.toolbox.widget;
 
-import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup.SwipeDirection;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,12 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup.SwipeDirection;
 
 /**
  * Swipeable view for {@link SwipeableListView} which hides a view behind an item.<br>
@@ -86,6 +87,9 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	
 	/** Offset in pixel given by last {@link #onViewSwipe} event. */
 	private int mLastOffset = 0;
+	
+	private float mStartOffset;
+	private boolean mStartDirection;
 	
 	/**
 	 * Overlay view offset relative to its parent swipeable view (-1 left outside, 0 completely
@@ -589,6 +593,9 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		if (!mStarted && (!mAnimating || mayInterruptAnimation)
 				&& Math.abs(offset) >= mData.startOffset) {
 			mStarted = true;
+			mStartDirection = Math.abs(mOffset) < 0.5f;
+			calculateAnimationDirectionChange(mStartDirection);
+			mStartOffset = mOffset;
 			mLastOffset = mData.stickyStart ? 0 : offset;
 		}
 		
@@ -637,7 +644,10 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 						|| mData.swipeDirection == SwipeDirection.RIGHT && mOffset < 0) {
 					mOffset = 0;
 				}
-
+				
+				if (Math.abs(mOffset) > 1f) {
+					mOffset = 1f;
+				}
 				
 				if (wasCoveredBefore || wasVisibleBefore) {
 					// manual direction change, calculation avoids sticky start
@@ -658,14 +668,19 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		case STOP:
 			if (mStarted) {
-				float startedAt = mOffset - 1f * mLastOffset / getWidth();
 				
-				if (startedAt > 0.5f) {
-					animate(offset > -mData.stopOffset);
-				} else if (startedAt < -0.5f) {
-					animate(offset < mData.stopOffset);
+				
+				if (isHiddenViewCovered()) {
+					animate(false);
+				} else if (isHiddenViewVisible()) {
+					animate(true);
 				} else {
-					animate(offset <= -mData.stopOffset || offset >= mData.stopOffset);
+					calculateAnimationDirectionChange(mStartDirection);
+					float moved = Math.abs(mOffset) - Math.abs(mStartOffset);
+					float stop = 1f * mData.stopOffset / getWidth();
+					
+					Log.d("b", moved + " " + stop);
+					animate(Math.abs(mStartOffset) < 0.5f ? moved > stop : moved > -stop);
 				}
 			}
 			break;
