@@ -5,7 +5,7 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 
 /**
- * Like {@link SoftPool} but thread-safe.<br>
+ * Like {@link SoftPool} but thread-safe (<b>Beta</b>).<br>
  * <br>
  * <i>Depends on</i>: {@link SynchronizedGeneralPool}
  * 

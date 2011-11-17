@@ -15,10 +15,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 /**
- * <b>This class is not ready to be used!</b>
+ * Download helper (<b>Alpha</b>).
  * 
  * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
  */
+@SuppressWarnings("unused")
 public class DownloadManager {
 	
 	// PRIVTE ====================================================================================

@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Static helper utilities for android related tasks.
+ * Static helper utilities for android related tasks (<b>Beta</b>).
  * 
  * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
  */

@@ -10,7 +10,7 @@ import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 
 /**
- * Network state information.<br>
+ * Network state information (<b>Beta +</b>).<br>
  * <br>
  * This class simplifies handling with connect information of WiFi and mobile network and broadcasts
  * a {@link #NETWORK_STATE_ACTION} on change of state. Use static methods to get information about

@@ -11,9 +11,11 @@ import android.text.ClipboardManager;
 import android.widget.Toast;
 
 /**
- * Save text on clipboard and let it clear itself after a while.<br>
+ * Save text on clipboard and let it clear itself after a while (<b>Beta</b>).<br>
  * <br>
- * <b>Note</b>: You have to add this class as service in you Manifest file.
+ * <i>Made for Android API &lt; 11.</i><br>
+ * <br>
+ * <i>Note</i>: You have to add this class as service in you Manifest file.
  * 
  * <pre>
  * {@code <service 
@@ -30,8 +32,7 @@ import android.widget.Toast;
  * {@code setClearToast} methods can be used to set information for a toast which will be displayed
  * when clipboard is cleared. A good place to call this method is in a custom
  * {@link Application#onCreate()}.<br>
- * <br>
- * Made for Android API &lt; 11.<br>
+ * 
  * <br>
  * <i>Depends on</i>: {@link AndroidUtils}
  * 

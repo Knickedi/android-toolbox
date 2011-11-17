@@ -5,7 +5,7 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 
 /**
- * Pool for soft referenced objects.<br>
+ * Pool for soft referenced objects (<b>Beta +</b>).<br>
  * <br>
  * It's a {@link GeneralPool} with a {@link SoftReference} implementation.<br>
  * Pooled objects will last until garbage collector reaches critical memory level and decides to

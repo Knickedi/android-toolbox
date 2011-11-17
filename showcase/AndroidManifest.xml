@@ -17,10 +17,14 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".swipablelistquickaction.SwipeableListQuickActionActivity" />
-        <activity android:name=".swipablelistquickaction.SwipeableListQuickActionTypeActivity" />
-        <activity android:name=".statustextdrawable.StatusTextDrawableActivity" />
-        <activity android:name=".bubbledrawable.BubbleDrawableActivity" />
+        <activity android:name=".InformationActivity" />
+        <activity android:name=".SwipeableShowcaseActivity" />
+        <activity android:name=".DrawableShowcaseActivity" />
+        
+        <activity android:name=".swipeable.SwipeableListQuickActionActivity" />
+        <activity android:name=".swipeable.SwipeableListQuickActionTypeActivity" />
+        <activity android:name=".drawable.StatusTextDrawableActivity" />
+        <activity android:name=".drawable.BubbleDrawableActivity" />
 
     </application>
     

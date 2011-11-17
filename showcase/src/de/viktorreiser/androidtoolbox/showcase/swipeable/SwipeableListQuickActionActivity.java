@@ -1,13 +1,10 @@
-package de.viktorreiser.androidtoolbox.showcase.swipablelistquickaction;
+package de.viktorreiser.androidtoolbox.showcase.swipeable;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.ClipboardManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
@@ -15,8 +12,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.viktorreiser.androidtoolbox.showcase.AndroidToolboxShowcaseActivity;
 import de.viktorreiser.androidtoolbox.showcase.R;
+import de.viktorreiser.androidtoolbox.showcase.SwipeableShowcaseActivity;
 import de.viktorreiser.toolbox.util.AndroidUtils;
 import de.viktorreiser.toolbox.widget.HiddenQuickActionSetup;
 import de.viktorreiser.toolbox.widget.HiddenQuickActionSetup.OnQuickActionListener;
@@ -25,24 +22,28 @@ import de.viktorreiser.toolbox.widget.SwipeableListView;
 
 public class SwipeableListQuickActionActivity extends Activity implements OnQuickActionListener {
 	
-	public static final String [][] ITEMS = new String [] [] {
+	// PRIVATE ====================================================================================
+	
+	private static final String [][] ITEMS = new String [] [] {
 			new String [] {"Google", "http://www.google.com/"},
 			new String [] {"Ebay", "http://www.ebay.com/"},
 			new String [] {"StackOverflow", "http://stackoverflow.com/"},
 	};
 	
-	public static final class QuickAction {
+	private static final class QuickAction {
 		public static final int OPEN = 1;
 		public static final int COPY = 2;
 	}
 	
+	
 	private HiddenQuickActionSetup mQuickActionSetup;
 	
+	// OVERRIDDEN =================================================================================
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle(AndroidToolboxShowcaseActivity.getActivityTitle(this.getClass()));
+		setTitle(SwipeableShowcaseActivity.getActivityTitle(this.getClass()));
 		
 		setupQuickAction();
 		
@@ -67,6 +68,8 @@ public class SwipeableListQuickActionActivity extends Activity implements OnQuic
 			break;
 		}
 	}
+	
+	// PRIVATE ====================================================================================
 	
 	private void setupQuickAction() {
 		mQuickActionSetup = new HiddenQuickActionSetup(this);
@@ -148,26 +151,5 @@ public class SwipeableListQuickActionActivity extends Activity implements OnQuic
 			public TextView title;
 			public TextView link;
 		}
-	}
-	
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add("Info");
-		
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		new AlertDialog.Builder(this)
-				.setTitle("Info")
-				.setMessage("You will see that the indicator (if enabled) will cover the the "
-						+ "list item if it is on top. If you have a better idea please check the "
-						+ " project page and suggest your solution for this issue.")
-				.setPositiveButton("OK", null)
-				.create().show();
-		
-		return true;
 	}
 }

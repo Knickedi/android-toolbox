@@ -1,4 +1,4 @@
-package de.viktorreiser.androidtoolbox.showcase.swipablelistquickaction;
+package de.viktorreiser.androidtoolbox.showcase.swipeable;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,9 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import de.viktorreiser.androidtoolbox.showcase.AndroidToolboxShowcaseActivity;
 import de.viktorreiser.androidtoolbox.showcase.R;
-import de.viktorreiser.androidtoolbox.showcase.swipablelistquickaction.SwipeableListQuickActionActivity.QuickAction;
+import de.viktorreiser.androidtoolbox.showcase.SwipeableShowcaseActivity;
 import de.viktorreiser.toolbox.util.AndroidUtils;
 import de.viktorreiser.toolbox.widget.HiddenQuickActionSetup;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView;
@@ -18,14 +17,23 @@ import de.viktorreiser.toolbox.widget.SwipeableListView;
 
 public class SwipeableListQuickActionTypeActivity extends Activity {
 	
+	// OVERRIDDEN =================================================================================
+	
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		setTitle(AndroidToolboxShowcaseActivity.getActivityTitle(getClass()));
+		setTitle(SwipeableShowcaseActivity.getActivityTitle(getClass()));
 		
 		SwipeableListView listView = new SwipeableListView(this);
 		listView.setAdapter(new MyAdapter());
 		setContentView(listView);
+	}
+	
+	// PRIVATE ====================================================================================
+	
+	private static final class QuickAction {
+		public static final int OPEN = 1;
+		public static final int COPY = 2;
 	}
 	
 	private class MyAdapter extends BaseAdapter {

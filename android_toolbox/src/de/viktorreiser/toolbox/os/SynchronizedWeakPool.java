@@ -5,7 +5,7 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 /**
- * Like {@link WeakPool} but thread-safe.<br>
+ * Like {@link WeakPool} but thread-safe (<b>Beta</b>).<br>
  * <br>
  * <i>Depends on</i>: {@link SynchronizedGeneralPool}
  * 

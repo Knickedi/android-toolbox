@@ -1,11 +1,11 @@
-package de.viktorreiser.androidtoolbox.showcase.statustextdrawable;
+package de.viktorreiser.androidtoolbox.showcase.drawable;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import de.viktorreiser.androidtoolbox.showcase.AndroidToolboxShowcaseActivity;
+import de.viktorreiser.androidtoolbox.showcase.DrawableShowcaseActivity;
 import de.viktorreiser.toolbox.graphics.drawable.StatusTextDrawable;
 import de.viktorreiser.toolbox.util.AndroidUtils;
 
@@ -14,7 +14,7 @@ public class StatusTextDrawableActivity extends Activity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		setTitle(AndroidToolboxShowcaseActivity.getActivityTitle(this.getClass()));
+		setTitle(DrawableShowcaseActivity.getActivityTitle(this.getClass()));
 		
 		LinearLayout mainLayout = getLinearRowLayout();
 		mainLayout.setOrientation(LinearLayout.VERTICAL);

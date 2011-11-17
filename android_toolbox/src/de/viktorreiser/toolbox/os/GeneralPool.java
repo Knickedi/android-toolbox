@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Put objects in a pool and access the in a shared way.<br>
+ * Put objects in a pool and access the in a shared way (<b>Beta +</b>).<br>
  * <br>
  * {@link #put(int, Object)} an object in the pool and {@link #get(int)} it later.<br>
  * Pooled object will be available until {@link #put(int, Object)} is called with same key or the

@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
 import android.os.AsyncTask;
 
 /**
- * Pool for weak referenced objects.<br>
+ * Pool for weak referenced objects (<b>Beta +</b>).<br>
  * <br>
  * It's a {@link GeneralPool} with a {@link WeakReference} implementation.<br>
  * Pooled objects will last as long they are strong referenced otherwise garbage collector will free

@@ -44,7 +44,7 @@ import de.viktorreiser.toolbox.os.SynchronizedSoftPool;
 import de.viktorreiser.toolbox.util.L;
 
 /**
- * Fetch favicons from Internet and cache them on SD card.<br>
+ * Fetch favicons from Internet and cache them on SD card (<b>Beta</b>).<br>
  * <br>
  * This class allows you to fetch favicons of websites and cache them on your SD card so you can
  * load them immediately on next request. A good practice is to keep an global instance in your own

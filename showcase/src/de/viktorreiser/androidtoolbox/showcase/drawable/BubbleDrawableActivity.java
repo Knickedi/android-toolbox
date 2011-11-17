@@ -1,4 +1,4 @@
-package de.viktorreiser.androidtoolbox.showcase.bubbledrawable;
+package de.viktorreiser.androidtoolbox.showcase.drawable;
 
 import android.app.Activity;
 import android.os.Bundle;

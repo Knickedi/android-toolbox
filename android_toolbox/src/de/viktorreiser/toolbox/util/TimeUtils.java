@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.Calendar;
 
 /**
- * Static helper for time related tasks.
+ * Static helper for time related tasks (<b>Beta</b>).
  * 
  * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
  */

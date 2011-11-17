@@ -1,7 +1,7 @@
 package de.viktorreiser.toolbox.os;
 
 /**
- * Like {@link GeneralPool} but thread-safe.<br>
+ * Like {@link GeneralPool} but thread-safe (<b>Beta</b>).<br>
  * <br>
  * <i>Depends on</i>: {@link GeneralPool}
  * 

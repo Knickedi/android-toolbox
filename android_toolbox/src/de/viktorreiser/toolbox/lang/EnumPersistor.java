@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Allow an enumeration value to be persisted as integer value.<br>
+ * Allow an enumeration value to be persisted as integer value (<b>Beta</b>).<br>
  * <br>
  * Persisting an enumeration value is not easy.<br>
  * Using its name is heavy and dangerous because it could be changed later. Same with its ordinal

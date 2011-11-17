@@ -4,7 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 /**
- * Static helper utilities for logging.<br>
+ * Static helper utilities for logging  (<b>Beta +</b>).<br>
  * <br>
  * Use {@link #setGlobalTag(String)}, {@link #setLogLevel(int)}, {@link #setLogTraceLevel(int)} or
  * {@link #setLogTraceFormat(boolean, boolean, boolean)} for initialization (a good place to call

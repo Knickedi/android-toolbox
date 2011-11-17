@@ -13,7 +13,7 @@ import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
 /**
- * Static samba helper utilities.<br>
+ * Static samba helper utilities (<b>Beta</b>).<br>
  * <br>
  * This class needs <a href="http://jcifs.samba.org/">JCIFS samba</a> library.<br>
  * 
