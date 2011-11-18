@@ -14,7 +14,6 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import de.viktorreiser.toolbox.util.L;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup.SwipeDirection;
 
 /**
@@ -520,10 +519,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		}
 		
 		mData = setup;
-		
-		if (mData.detachedFromList) {
-			//mSwipeableHelper = new SwipeableHelper();
-		}
 	}
 	
 	/**
@@ -877,6 +872,11 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public boolean performClick() {
+		if (mData.consumeClick) {
+			onViewSwipe(null, SwipeEvent.CLICK, 0, -1, null);
+			return true;
+		}
+		
 		return mStarted ? false : super.performClick();
 	}
 	
@@ -885,6 +885,11 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public boolean performLongClick() {
+		if (mData.consumeLongClick) {
+			onViewSwipe(null, SwipeEvent.LONG_CLICK, 0, -1, null);
+			return true;
+		}
+		
 		return mStarted ? false : super.performLongClick();
 	}
 	
@@ -1055,7 +1060,13 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	}
 	
 	private boolean handleTouch(MotionEvent e, boolean intercept) {
-		L.d(e.getAction() + " " + intercept);
+		if (mData.consumeClick) {
+			setClickable(true);
+		}
+		
+		if (mData.consumeLongClick) {
+			setLongClickable(true);
+		}
 		
 		switch (e.getAction()) {
 		case MotionEvent.ACTION_DOWN:
@@ -1078,7 +1089,13 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 			break;
 		}
 		
-		return mStarted || !intercept;
+		if (intercept) {
+			super.onInterceptTouchEvent(e);
+			return mStarted;
+		} else {
+			super.onTouchEvent(e);
+			return true;
+		}
 	}
 	
 	
