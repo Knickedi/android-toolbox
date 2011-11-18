@@ -143,6 +143,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	private boolean mLongClicked = false;
 	
 	private View mMotionTarget = null;
+	private boolean mStartedTwice = false;
 	
 	// PUBLIC =====================================================================================
 	
@@ -1145,26 +1146,31 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		switch (e.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			if (intercept) {
+			if (intercept && !mStartedTwice) {
+				mStartedTwice = true;
 				mLongClicked = false;
 				mStartX = (int) e.getX();
-				mStarted = onViewSwipe(null, SwipeEvent.START, 0, -1, null);
+				onViewSwipe(null, SwipeEvent.START, 0, -1, null);
 			}
 			break;
 		
 		case MotionEvent.ACTION_MOVE:
 			if (!mLongClicked) {
-				mStarted |= onViewSwipe(null, SwipeEvent.MOVE, (int) e.getX() - mStartX, -1, null);
+				onViewSwipe(null, SwipeEvent.MOVE, (int) e.getX() - mStartX, -1, null);
 			}
 			break;
 		
 		case MotionEvent.ACTION_UP:
+			mStartedTwice = false;
+			
 			if (!mLongClicked) {
 				onViewSwipe(null, SwipeEvent.STOP, (int) e.getX() - mStartX, -1, null);
 			}
 			break;
 		
 		case MotionEvent.ACTION_CANCEL:
+			mStartedTwice = false;
+			
 			if (!mLongClicked) {
 				onViewSwipe(null, SwipeEvent.CANCEL, (int) e.getX() - mStartX, -1, null);
 			}
