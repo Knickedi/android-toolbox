@@ -95,6 +95,7 @@ public class SwipeableListDetachedActivity extends Activity {
 				public void onClick(View v) {
 					mSwipeableHiddenView.closeHiddenView();
 					mRootView.setBackgroundColor(0xff440000);
+					triggerInvisible(0);
 				}
 			});
 			
@@ -104,6 +105,7 @@ public class SwipeableListDetachedActivity extends Activity {
 				public void onClick(View v) {
 					mSwipeableHiddenView.closeHiddenView();
 					mRootView.setBackgroundColor(0xff004400);
+					triggerInvisible(1);
 				}
 			});
 			
@@ -113,12 +115,14 @@ public class SwipeableListDetachedActivity extends Activity {
 				public void onClick(View v) {
 					mSwipeableHiddenView.closeHiddenView();
 					mRootView.setBackgroundColor(0xff000044);
+					triggerInvisible(2);
 				}
 			});
 		}
 		
 		public void reset() {
 			mRootView.setBackgroundColor(0);
+			triggerInvisible(-1);
 		}
 		
 		@Override
@@ -126,5 +130,10 @@ public class SwipeableListDetachedActivity extends Activity {
 			return mHiddenLayout;
 		}
 		
+		private void triggerInvisible(int position) {
+			for (int i = 0; i < mHiddenLayout.getChildCount(); i++) {
+				mHiddenLayout.getChildAt(i).setVisibility(i == position ? View.GONE : View.VISIBLE);
+			}
+		}
 	}
 }
