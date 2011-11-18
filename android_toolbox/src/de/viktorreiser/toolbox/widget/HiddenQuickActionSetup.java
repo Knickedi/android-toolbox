@@ -532,16 +532,18 @@ public class HiddenQuickActionSetup extends HiddenViewSetup {
 					v.setPressed(true);
 					v.invalidate();
 				} else if (a == MotionEvent.ACTION_UP || a == MotionEvent.ACTION_CANCEL) {
-					if (a == MotionEvent.ACTION_UP && mQuickActionListener != null) {
+					if (a == MotionEvent.ACTION_UP) {
 						if (mCloseSwipeableOnQuickAction) {
 							closeHiddenView();
 						}
 						
-						mQuickActionListener.onQuickAction(
-								getCurrentListView(),
-								getCurrentSwipeableHiddenView(),
-								getCurrentPosition(),
-								((ActionInfo) v.getTag()).id);
+						if (mQuickActionListener != null) {
+							mQuickActionListener.onQuickAction(
+									getCurrentListView(),
+									getCurrentSwipeableHiddenView(),
+									getCurrentPosition(),
+									((ActionInfo) v.getTag()).id);
+						}
 					}
 					
 					mPopupDelayHandler.removeCallbacks(mIndicatorStart);
