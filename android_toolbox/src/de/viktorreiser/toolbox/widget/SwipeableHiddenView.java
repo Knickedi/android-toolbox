@@ -561,6 +561,19 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		return Math.round(mOffset * 1000) == 0;
 	}
 	
+	/**
+	 * Close swiped view.<br>
+	 * <br>
+	 * Use this when the view is detached from list by calling
+	 * {@link HiddenViewSetup#setDetachFromList(boolean)}. Otherwise you should use
+	 * {@link HiddenViewSetup#closeHiddenView()} and not this method.
+	 */
+	public void closeHiddenView() {
+		if (!isHiddenViewCovered()) {
+			onViewSwipe(null, SwipeEvent.CLOSE, 0, -1, null);
+		}
+	}
+	
 	// OVERRIDDEN =================================================================================
 	
 	public SwipeableHiddenView(Context context) {
