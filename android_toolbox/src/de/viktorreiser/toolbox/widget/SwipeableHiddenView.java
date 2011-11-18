@@ -886,17 +886,13 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public boolean performLongClick() {
-		if (mData.consumeLongClick) {
+		if (mStarted) {
+			return false;
+		} else if (mData.consumeLongClick) {
 			mLongClicked = true;
 			onViewSwipe(null, SwipeEvent.LONG_CLICK, 0, -1, null);
 			return true;
-		}
-		
-		if (mStarted) {
-			return false;
-		}
-		
-		if (super.performLongClick()) {
+		} else if (super.performLongClick()) {
 			mLongClicked = true;
 			onViewSwipe(null, SwipeEvent.CANCEL, 0, -1, null);
 			return true;
