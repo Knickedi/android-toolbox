@@ -3,10 +3,12 @@ package de.viktorreiser.androidtoolbox.showcase.swipeable;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import de.viktorreiser.androidtoolbox.showcase.InformationActivity;
 import de.viktorreiser.androidtoolbox.showcase.R;
 import de.viktorreiser.androidtoolbox.showcase.SwipeableShowcaseActivity;
 import de.viktorreiser.toolbox.util.AndroidUtils;
@@ -15,6 +17,11 @@ import de.viktorreiser.toolbox.widget.SwipeableHiddenView;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup.SwipeDirection;
 import de.viktorreiser.toolbox.widget.SwipeableListView;
 
+/**
+ * Demonstration of different quick actions for list items by using list view types.
+ * 
+ * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+ */
 public class SwipeableListQuickActionTypeActivity extends Activity {
 	
 	// OVERRIDDEN =================================================================================
@@ -29,6 +36,24 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 		setContentView(listView);
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		String info = "<h1>Different quick actions for list view types</h1>"
+				+ "This activity provides a (stupid) example which shows how to use different "
+				+ "quick action setups for different list view types. It alternates between two "
+				+ "different setups.<br>"
+				+ "<br>"
+				+ "The first one can be swipe to the right side and the second to the left side "
+				+ "only. The quick action have no function, just dummies.<br>"
+				+ "<br>"
+				+ "This demonstration shows that you don't have to use a single setup for all "
+				+ "and can implement all kind of fancy behaviors.";
+		
+		InformationActivity.showInfo(this, info);
+		
+		return false;
+	}
+	
 	// PRIVATE ====================================================================================
 	
 	private static final class QuickAction {
@@ -37,7 +62,7 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 	}
 	
 	private class MyAdapter extends BaseAdapter {
-
+		
 		private HiddenQuickActionSetup mSetup1;
 		private HiddenQuickActionSetup mSetup2;
 		
@@ -75,7 +100,7 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 		public int getCount() {
 			return 20;
 		}
-
+		
 		@Override
 		public Object getItem(int position) {
 			return null;
@@ -90,18 +115,19 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 		public int getViewTypeCount() {
 			return 2;
 		}
-
+		
 		@Override
 		public long getItemId(int position) {
 			return 0;
 		}
-
+		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			int type = getItemViewType(position);
 			
 			if (convertView == null) {
-				TextView t = new TextView(parent.getContext(), null, android.R.attr.textAppearanceLarge);
+				TextView t = new TextView(parent.getContext(), null,
+						android.R.attr.textAppearanceLarge);
 				int p = AndroidUtils.dipToPixel(parent.getContext(), 15);
 				t.setPadding(p, p, p, p);
 				
@@ -117,6 +143,5 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 			
 			return convertView;
 		}
-		
 	}
 }

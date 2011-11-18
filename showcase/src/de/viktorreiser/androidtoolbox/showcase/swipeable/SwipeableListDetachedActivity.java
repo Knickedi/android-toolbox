@@ -15,6 +15,11 @@ import de.viktorreiser.toolbox.widget.HiddenQuickActionSetup;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup;
 
+/**
+ * Demonstration of detached swipeable views which are used without a sqipeable list view.
+ * 
+ * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+ */
 public class SwipeableListDetachedActivity extends Activity {
 	
 	// PRIVATE ====================================================================================

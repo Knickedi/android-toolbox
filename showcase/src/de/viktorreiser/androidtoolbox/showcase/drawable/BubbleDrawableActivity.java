@@ -10,6 +10,7 @@ import de.viktorreiser.toolbox.graphics.drawable.BubbleDrawable;
 import de.viktorreiser.toolbox.graphics.drawable.BubbleDrawable.IndicatorDirection;
 import de.viktorreiser.toolbox.util.AndroidUtils;
 
+@SuppressWarnings("unused")
 public class BubbleDrawableActivity extends Activity {
 	
 	@Override

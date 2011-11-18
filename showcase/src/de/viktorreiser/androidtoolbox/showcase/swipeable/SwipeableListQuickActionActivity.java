@@ -20,6 +20,11 @@ import de.viktorreiser.toolbox.widget.HiddenQuickActionSetup.OnQuickActionListen
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView;
 import de.viktorreiser.toolbox.widget.SwipeableListView;
 
+/**
+ * Demonstration of ordinary quick action use case.
+ * 
+ * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+ */
 public class SwipeableListQuickActionActivity extends Activity implements OnQuickActionListener {
 	
 	// PRIVATE ====================================================================================

@@ -9,6 +9,11 @@ import de.viktorreiser.androidtoolbox.showcase.DrawableShowcaseActivity;
 import de.viktorreiser.toolbox.graphics.drawable.StatusTextDrawable;
 import de.viktorreiser.toolbox.util.AndroidUtils;
 
+/**
+ * Demonstration of {@link StatusTextDrawable}.
+ * 
+ * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+ */
 public class StatusTextDrawableActivity extends Activity {
 	
 	@Override
