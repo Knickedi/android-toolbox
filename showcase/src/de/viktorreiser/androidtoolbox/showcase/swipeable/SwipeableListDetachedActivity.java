@@ -1,14 +1,19 @@
 package de.viktorreiser.androidtoolbox.showcase.swipeable;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.viktorreiser.androidtoolbox.showcase.R;
 import de.viktorreiser.androidtoolbox.showcase.SwipeableShowcaseActivity;
 import de.viktorreiser.toolbox.widget.HiddenQuickActionSetup;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView;
+import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup;
 
 public class SwipeableListDetachedActivity extends Activity {
 	
@@ -35,5 +40,43 @@ public class SwipeableListDetachedActivity extends Activity {
 						"Clicked!", Toast.LENGTH_SHORT).show();
 			}
 		});
+		
+		((SwipeableHiddenView) findViewById(R.id.hidden_view)).setHiddenViewSetup(
+				new HiddenColorTriggerSetup());
+	}
+	
+	// PRIVATE ====================================================================================
+	
+	private class HiddenColorTriggerSetup extends HiddenViewSetup {
+
+		private LinearLayout mHiddenLayout;
+		
+		public HiddenColorTriggerSetup() {
+			final Context context = SwipeableListDetachedActivity.this;
+			setDetachFromList(true);
+			
+			mHiddenLayout = new LinearLayout(context);
+			mHiddenLayout.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+			
+			for (int i = 0; i < 3; i++) {
+				Button b = new Button(context);
+				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+						0, LinearLayout.LayoutParams.FILL_PARENT);
+				lp.weight = 1f;
+				b.setLayoutParams(lp);
+				mHiddenLayout.addView(b);
+			}
+			
+			((Button) mHiddenLayout.getChildAt(0)).setText("Red");
+			((Button) mHiddenLayout.getChildAt(1)).setText("Green");
+			((Button) mHiddenLayout.getChildAt(2)).setText("Blue");
+		}
+		
+		@Override
+		public View getHiddenView() {
+			return mHiddenLayout;
+		}
+		
 	}
 }

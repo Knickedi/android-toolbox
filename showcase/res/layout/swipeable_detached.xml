@@ -1,22 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:fillViewport="true" >
 
-    <de.viktorreiser.toolbox.widget.SwipeableHiddenView
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dip"
-        android:id="@+id/quick_action_view" >
+        android:orientation="vertical"
+        android:padding="20dip" >
 
         <TextView
+            android:id="@+id/textView1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="10dip"
-            android:gravity="center"
-            android:text="Detached swipeable quick action view"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </de.viktorreiser.toolbox.widget.SwipeableHiddenView>
+            android:layout_marginBottom="20dip"
+            android:text="This view shows how to use a quick action view without a list. However it has no function."
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-</LinearLayout>
+        <de.viktorreiser.toolbox.widget.SwipeableHiddenView
+            android:id="@+id/quick_action_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#ff333333"
+                android:gravity="center"
+                android:padding="10dip"
+                android:text="Detached swipeable quick action view"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </de.viktorreiser.toolbox.widget.SwipeableHiddenView>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:text="This view shows how to use a dynmaic hidden swipeable view without a list. It even shows that the view can contain clickable views."
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <de.viktorreiser.toolbox.widget.SwipeableHiddenView
+            android:id="@+id/hidden_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip" >
+
+            <Button
+                android:id="@+id/swipeable_button"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dip"
+                android:text="Swipeable reset button"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </de.viktorreiser.toolbox.widget.SwipeableHiddenView>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="40dip"
+            android:text="We waste some space here to show that the swipeable view can be used within a vertical scrollable view."
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+
+</ScrollView>

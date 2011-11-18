@@ -1008,7 +1008,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	public void setPadding(int l, int t, int r, int b) {
 		if (l != 0 || t != 0 || r != 0 || b != 0) {
 			throw new IllegalArgumentException(getClass().getSimpleName()
-					+ " does not allow padding parameters!  Use inner view for that!");
+					+ " does not allow padding parameters! Use inner view for that!");
 		}
 	}
 	
@@ -1031,7 +1031,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 				if (!mAnimating) {
 					return;
 				}
-				// L.d("animate " + mOffset);
 				
 				float step = (System.nanoTime() - mAnimationStepTime) / 1000000f
 						/ mData.animationSpeed;
