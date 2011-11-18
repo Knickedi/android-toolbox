@@ -140,6 +140,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	
 	
 	private int mStartX;
+	private boolean mLongClicked = false;
 	
 	// PUBLIC =====================================================================================
 	
@@ -850,7 +851,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 			drawChild(canvas, mOverlayView, drawingTime);
 		}
 	}
-
+	
 	/**
 	 * <i>Overridden for internal use!</i>
 	 */
@@ -886,11 +887,22 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	@Override
 	public boolean performLongClick() {
 		if (mData.consumeLongClick) {
+			mLongClicked = true;
 			onViewSwipe(null, SwipeEvent.LONG_CLICK, 0, -1, null);
 			return true;
 		}
 		
-		return mStarted ? false : super.performLongClick();
+		if (mStarted) {
+			return false;
+		}
+		
+		if (super.performLongClick()) {
+			mLongClicked = true;
+			onViewSwipe(null, SwipeEvent.CANCEL, 0, -1, null);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
@@ -1071,21 +1083,28 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		switch (e.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			if (intercept) {
+				mLongClicked = false;
 				mStartX = (int) e.getX();
 				mStarted = onViewSwipe(null, SwipeEvent.START, 0, -1, null);
 			}
 			break;
-			
+		
 		case MotionEvent.ACTION_MOVE:
-			mStarted |= onViewSwipe(null, SwipeEvent.MOVE, (int) e.getX() - mStartX , -1, null);
+			if (!mLongClicked) {
+				mStarted |= onViewSwipe(null, SwipeEvent.MOVE, (int) e.getX() - mStartX, -1, null);
+			}
 			break;
-			
+		
 		case MotionEvent.ACTION_UP:
-			onViewSwipe(null, SwipeEvent.STOP, (int) e.getX() - mStartX , -1, null);
+			if (!mLongClicked) {
+				onViewSwipe(null, SwipeEvent.STOP, (int) e.getX() - mStartX, -1, null);
+			}
 			break;
-			
+		
 		case MotionEvent.ACTION_CANCEL:
-			onViewSwipe(null, SwipeEvent.CANCEL, (int) e.getX() - mStartX, -1, null);
+			if (!mLongClicked) {
+				onViewSwipe(null, SwipeEvent.CANCEL, (int) e.getX() - mStartX, -1, null);
+			}
 			break;
 		}
 		
