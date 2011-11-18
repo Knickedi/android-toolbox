@@ -41,14 +41,21 @@ public class SwipeableListDetachedActivity extends Activity {
 			}
 		});
 		
-		((SwipeableHiddenView) findViewById(R.id.hidden_view)).setHiddenViewSetup(
-				new HiddenColorTriggerSetup());
+		final HiddenColorTriggerSetup s2 = new HiddenColorTriggerSetup();
+		
+		((SwipeableHiddenView) findViewById(R.id.hidden_view)).setHiddenViewSetup(s2);
+		findViewById(R.id.swipeable_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				s2.reset();
+			}
+		});
 	}
 	
 	// PRIVATE ====================================================================================
 	
 	private class HiddenColorTriggerSetup extends HiddenViewSetup {
-
+		
 		private LinearLayout mHiddenLayout;
 		
 		public HiddenColorTriggerSetup() {
@@ -69,8 +76,35 @@ public class SwipeableListDetachedActivity extends Activity {
 			}
 			
 			((Button) mHiddenLayout.getChildAt(0)).setText("Red");
+			mHiddenLayout.getChildAt(0).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					getWindow().getDecorView().findViewById(R.id.root_view)
+							.setBackgroundColor(0xff440000);
+				}
+			});
+			
 			((Button) mHiddenLayout.getChildAt(1)).setText("Green");
+			mHiddenLayout.getChildAt(1).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					getWindow().getDecorView().findViewById(R.id.root_view)
+							.setBackgroundColor(0xff004400);
+				}
+			});
+			
 			((Button) mHiddenLayout.getChildAt(2)).setText("Blue");
+			mHiddenLayout.getChildAt(2).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					getWindow().getDecorView().findViewById(R.id.root_view)
+							.setBackgroundColor(0xff000044);
+				}
+			});
+		}
+		
+		public void reset() {
+			getWindow().getDecorView().findViewById(R.id.root_view).setBackgroundColor(0);
 		}
 		
 		@Override
