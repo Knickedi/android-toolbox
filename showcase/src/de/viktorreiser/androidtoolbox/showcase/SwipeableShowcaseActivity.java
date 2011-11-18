@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import de.viktorreiser.androidtoolbox.showcase.AndroidToolboxShowcaseActivity.ShowcaseAdapter;
+import de.viktorreiser.androidtoolbox.showcase.swipeable.SwipeableListDetachedActivity;
 import de.viktorreiser.androidtoolbox.showcase.swipeable.SwipeableListQuickActionActivity;
 import de.viktorreiser.androidtoolbox.showcase.swipeable.SwipeableListQuickActionTypeActivity;
 
@@ -23,17 +24,20 @@ public class SwipeableShowcaseActivity extends Activity implements OnItemClickLi
 	
 	private static final Class<?> [] mShowcaseActivities = new Class [] {
 			SwipeableListQuickActionActivity.class,
-			SwipeableListQuickActionTypeActivity.class
+			SwipeableListQuickActionTypeActivity.class,
+			SwipeableListDetachedActivity.class
 	};
 	
 	private static final String [] mShowcaseNames = new String [] {
 			"Quick action",
-			"Quick action (view type)"
+			"Quick action (view type)",
+			"Swipeable detached"
 	};
 	
 	private static final String [] mShowcaseDescriptions = new String [] {
 			"Ordinary quick action implementation for list items of the same kind",
-			"Quick action implementation which uses list view type to use different setups for list items"
+			"Quick action implementation which uses list view type to use different setups for list items",
+			"This shows how you can use a swipeable view without a swipeable list"
 	};
 	
 	// PUBLIC =====================================================================================

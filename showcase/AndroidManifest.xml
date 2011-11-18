@@ -23,6 +23,8 @@
         
         <activity android:name=".swipeable.SwipeableListQuickActionActivity" />
         <activity android:name=".swipeable.SwipeableListQuickActionTypeActivity" />
+        <activity android:name=".swipeable.SwipeableListDetachedActivity" />
+        
         <activity android:name=".drawable.StatusTextDrawableActivity" />
         <activity android:name=".drawable.BubbleDrawableActivity" />
 

@@ -7,12 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import de.viktorreiser.toolbox.util.L;
 import de.viktorreiser.toolbox.widget.SwipeableHiddenView.HiddenViewSetup.SwipeDirection;
 
 /**
@@ -136,6 +138,9 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	
 	/** Last time in nanoseconds of last animation step (for smooth calculations). */
 	private long mAnimationStepTime;
+	
+	
+	private int mStartX;
 	
 	// PUBLIC =====================================================================================
 	
@@ -515,6 +520,10 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		}
 		
 		mData = setup;
+		
+		if (mData.detachedFromList) {
+			//mSwipeableHelper = new SwipeableHelper();
+		}
 	}
 	
 	/**
@@ -846,6 +855,38 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 			drawChild(canvas, mOverlayView, drawingTime);
 		}
 	}
+
+	/**
+	 * <i>Overridden for internal use!</i>
+	 */
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+		return mData.detachedFromList ? handleTouch(e, false) : super.onTouchEvent(e);
+	}
+	
+	/**
+	 * <i>Overridden for internal use!</i>
+	 */
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent e) {
+		return mData.detachedFromList ? handleTouch(e, true) : super.onInterceptTouchEvent(e);
+	}
+	
+	/**
+	 * <i>Overridden for internal use!</i>
+	 */
+	@Override
+	public boolean performClick() {
+		return mStarted ? false : super.performClick();
+	}
+	
+	/**
+	 * <i>Overridden for internal use!</i>
+	 */
+	@Override
+	public boolean performLongClick() {
+		return mStarted ? false : super.performLongClick();
+	}
 	
 	/*
 	 * Fix all predefined view group function so they only support a single view and do not break
@@ -1011,6 +1052,33 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		if (attrs == null) {
 			return;
 		}
+	}
+	
+	private boolean handleTouch(MotionEvent e, boolean intercept) {
+		L.d(e.getAction() + " " + intercept);
+		
+		switch (e.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			if (intercept) {
+				mStartX = (int) e.getX();
+				mStarted = onViewSwipe(null, SwipeEvent.START, 0, -1, null);
+			}
+			break;
+			
+		case MotionEvent.ACTION_MOVE:
+			mStarted |= onViewSwipe(null, SwipeEvent.MOVE, (int) e.getX() - mStartX , -1, null);
+			break;
+			
+		case MotionEvent.ACTION_UP:
+			onViewSwipe(null, SwipeEvent.STOP, (int) e.getX() - mStartX , -1, null);
+			break;
+			
+		case MotionEvent.ACTION_CANCEL:
+			onViewSwipe(null, SwipeEvent.CANCEL, (int) e.getX() - mStartX, -1, null);
+			break;
+		}
+		
+		return mStarted || !intercept;
 	}
 	
 	

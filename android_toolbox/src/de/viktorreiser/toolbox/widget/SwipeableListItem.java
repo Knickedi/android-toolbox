@@ -111,6 +111,9 @@ public interface SwipeableListItem {
 		/** {@link #setHideSelectorOnStart(boolean)} but <b>inverted</b> (default {@code false}). */
 		protected boolean dontHideSelector = false;
 		
+		/** {@link #setDetachFromList(boolean)} (default {@code false}) */
+		protected boolean detachedFromList = false;
+		
 		// PUBLIC -----------------------------------------------------------------------------
 		
 		/**
@@ -205,6 +208,20 @@ public interface SwipeableListItem {
 		public void setAnimationSpeed(int animationSpeed) {
 			checkChangesLock();
 			this.animationSpeed = animationSpeed < 0 ? 0 : animationSpeed;
+		}
+		
+		/**
+		 * Is view detached from list?<br>
+		 * <br>
+		 * You can use this to use a swipeable view as stand-alone view which is not used in a
+		 * swipeable list view.
+		 * 
+		 * @param detach
+		 *            {@code true} to detach swipeable view from list
+		 */
+		public void setDetachFromList(boolean detach) {
+			checkChangesLock();
+			detachedFromList = detach;
 		}
 		
 		// PRIVATE ----------------------------------------------------------------------------
