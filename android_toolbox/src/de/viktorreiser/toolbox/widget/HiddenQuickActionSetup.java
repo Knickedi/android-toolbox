@@ -335,15 +335,17 @@ public class HiddenQuickActionSetup extends HiddenViewSetup {
 	 * @param actionId
 	 *            ID which will be reported to {@link OnQuickActionListener} when it is performed
 	 * @param actionDescriptionResId
-	 *            action description shown when hovered
+	 *            action description shown when hovered (can be {@code 0} for no indicator)
 	 * @param drawableResId
 	 *            drawable for quick action
 	 * 
 	 * @return {@code false} if action ID already set
 	 */
 	public boolean addAction(int actionId, int actionDescriptionResId, int drawableResId) {
-		return addAction(actionId,
-				mLinearLayout.getContext().getResources().getString(actionDescriptionResId),
+		return addAction(
+				actionId,
+				actionDescriptionResId == 0 ? null : mLinearLayout.getContext().getResources()
+						.getString(actionDescriptionResId),
 				mLinearLayout.getContext().getResources().getDrawable(drawableResId));
 	}
 	
@@ -353,15 +355,17 @@ public class HiddenQuickActionSetup extends HiddenViewSetup {
 	 * @param actionId
 	 *            ID which will be reported to {@link OnQuickActionListener} when it is performed
 	 * @param actionDescriptionResId
-	 *            action description shown when hovered
+	 *            action description shown when hovered (can be {@code 0} for no indicator)
 	 * @param drawable
 	 *            drawable for quick action
 	 * 
 	 * @return {@code false} if action ID already set
 	 */
 	public boolean addAction(int actionId, int actionDescriptionResId, Drawable drawable) {
-		return addAction(actionId,
-				mLinearLayout.getContext().getResources().getString(actionDescriptionResId),
+		return addAction(
+				actionId,
+				actionDescriptionResId == 0 ? null : mLinearLayout.getContext().getResources()
+						.getString(actionDescriptionResId),
 				drawable);
 	}
 	
@@ -371,7 +375,7 @@ public class HiddenQuickActionSetup extends HiddenViewSetup {
 	 * @param actionId
 	 *            ID which will be reported to {@link OnQuickActionListener} when it is performed
 	 * @param actionDescription
-	 *            action description shown when hovered
+	 *            action description shown when hovered (can be {@code null} for no indicator)
 	 * @param drawableResId
 	 *            drawable for quick action
 	 * 
@@ -388,7 +392,7 @@ public class HiddenQuickActionSetup extends HiddenViewSetup {
 	 * @param actionId
 	 *            ID which will be reported to {@link OnQuickActionListener} when it is performed
 	 * @param actionDescription
-	 *            action description shown when hovered
+	 *            action description shown when hovered (can be {@code null} for no indicator)
 	 * @param drawable
 	 *            drawable for quick action
 	 * 
@@ -521,7 +525,7 @@ public class HiddenQuickActionSetup extends HiddenViewSetup {
 					
 					if (mIndicatorDelay == 0) {
 						mIndicatorStart.run();
-					} else if (mIndicatorDelay > 0) {
+					} else if (mIndicatorDelay > 0 && ((ActionInfo) v.getTag()).description != null) {
 						mPopupDelayHandler.postDelayed(mIndicatorStart, mIndicatorDelay);
 					}
 					

@@ -21,8 +21,8 @@ public class SwipeableListDetachedActivity extends Activity {
 		HiddenQuickActionSetup s1 = new HiddenQuickActionSetup(this);
 		s1.setDetachFromList(true);
 		s1.setBackgroundResource(R.drawable.quickaction_background);
-		s1.addAction(1, "", R.drawable.quickaction_url);
-		s1.addAction(2, "", R.drawable.quickaction_urlopen);
+		s1.addAction(1, 0, R.drawable.quickaction_url);
+		s1.addAction(2, 0, R.drawable.quickaction_urlopen);
 		((SwipeableHiddenView) findViewById(R.id.quick_action_view)).setHiddenViewSetup(s1);
 	}
 }
