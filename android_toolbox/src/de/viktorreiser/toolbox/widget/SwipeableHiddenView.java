@@ -142,6 +142,8 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	private int mStartX;
 	private boolean mLongClicked = false;
 	
+	private View mMotionTarget = null;
+	
 	// PUBLIC =====================================================================================
 	
 	/**
@@ -153,8 +155,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 * all instances. The view will be shared between them since hidden view won't ever be visible
 	 * in more than one {@link SwipeableHiddenView}.<br>
 	 * <br>
-	 * Always determinate whether {@link #isHiddenViewCovered()} is {@code false} before interacting
-	 * with the hidden view (like performing click actions)!<br>
 	 * When hidden view triggers an action you can use {@link #getCurrentSwipeableHiddenView()},
 	 * {@link #getCurrentListView()} and {@link #getCurrentPosition()} to determinate on which
 	 * {@link SwipeableHiddenView}, list view and list item the action is performed.<br>
@@ -850,6 +850,61 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		} else {
 			drawChild(canvas, mOverlayView, drawingTime);
 		}
+	}
+	
+	/**
+	 * <i>Overridden for internal use!</i><br>
+	 * <br>
+	 * Copied from original android source and modified for our needs: Stripped disallow of
+	 * interception and we don't iterate over all children to find touch event match but delegate to
+	 * hidden or overlay view directly.
+	 */
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		final int action = ev.getAction();
+		final float xf = ev.getX();
+		final float yf = ev.getY();
+		
+		if (action == MotionEvent.ACTION_DOWN) {
+			if (mMotionTarget != null) {
+				mMotionTarget = null;
+			}
+			
+			if (!onInterceptTouchEvent(ev)) {
+				ev.setAction(MotionEvent.ACTION_DOWN);
+				final View v = isHiddenViewCovered() ? mOverlayView : mHiddenView;
+				
+				if (v.dispatchTouchEvent(ev)) {
+					mMotionTarget = v;
+					return true;
+				}
+			}
+		}
+		
+		boolean isUpOrCancel = (action == MotionEvent.ACTION_UP) ||
+				(action == MotionEvent.ACTION_CANCEL);
+		
+		final View target = mMotionTarget;
+		if (target == null) {
+			ev.setLocation(xf, yf);
+			return super.dispatchTouchEvent(ev);
+		}
+		
+		if (onInterceptTouchEvent(ev)) {
+			ev.setAction(MotionEvent.ACTION_CANCEL);
+			ev.setLocation(xf, yf);
+			target.dispatchTouchEvent(ev);
+			mMotionTarget = null;
+			return true;
+		}
+		
+		if (isUpOrCancel) {
+			mMotionTarget = null;
+		}
+		
+		ev.setLocation(xf, yf);
+		
+		return target.dispatchTouchEvent(ev);
 	}
 	
 	/**
