@@ -1,5 +1,7 @@
 package de.viktorreiser.toolbox.widget;
 
+import java.lang.reflect.Field;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -141,9 +143,25 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	
 	private int mStartX;
 	private boolean mLongClicked = false;
-	
-	private View mMotionTarget = null;
 	private boolean mStartedTwice = false;
+	
+	private View [] mOverlayChild = new View [] {null};
+	private View [] mHiddenChild = new View [] {null};
+	
+	private static Field mChildren;
+	private static Field mChildrenCount;
+	
+	static {
+		try {
+			mChildren = ViewGroup.class.getField("mChildren");
+			mChildren.setAccessible(true);
+			mChildrenCount = ViewGroup.class.getField("mChildrenCount");
+			mChildrenCount.setAccessible(true);
+		} catch (Exception e) {
+			mChildren = null;
+			mChildrenCount = null;
+		}
+	}
 	
 	// PUBLIC =====================================================================================
 	
@@ -829,7 +847,6 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	public void dispatchDraw(Canvas canvas) {
 		long drawingTime = getDrawingTime();
 		
-		// L.d("draw  " + mOffset);
 		if (!isHiddenViewCovered()) {
 			canvas.save();
 			
@@ -869,56 +886,32 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	/**
 	 * <i>Overridden for internal use!</i><br>
 	 * <br>
-	 * Copied from original android source and modified for our needs: Stripped disallow of
-	 * interception and we don't iterate over all children to find touch event match but delegate to
-	 * hidden or overlay view directly.
+	 * Copied from original android source and modified for our needs:<br>
+	 * We don't iterate over all children to find touch event match but delegate to hidden or
+	 * overlay view directly.
 	 */
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		final int action = ev.getAction();
-		final float xf = ev.getX();
-		final float yf = ev.getY();
+		checkRequirements();
 		
-		if (action == MotionEvent.ACTION_DOWN) {
-			if (mMotionTarget != null) {
-				mMotionTarget = null;
-			}
+		try {
+			// FIXME we need a better way than reflection
+			// a rewrite of this method leads to bugs or crashes, so I decided for reflection
+			final Object oldChildren = mChildren.get(this);
+			final Object oldChildrenCount = mChildrenCount.get(this);
 			
-			if (!onInterceptTouchEvent(ev)) {
-				ev.setAction(MotionEvent.ACTION_DOWN);
-				final View v = isHiddenViewCovered() ? mOverlayView : mHiddenView;
-				
-				if (v.dispatchTouchEvent(ev)) {
-					mMotionTarget = v;
-					return true;
-				}
-			}
-		}
-		
-		boolean isUpOrCancel = (action == MotionEvent.ACTION_UP) ||
-				(action == MotionEvent.ACTION_CANCEL);
-		
-		final View target = mMotionTarget;
-		if (target == null) {
-			ev.setLocation(xf, yf);
+			mChildren.set(this, isHiddenViewCovered() ? mOverlayChild : mHiddenChild);
+			mChildrenCount.set(this, 1);
+			
+			boolean result = super.dispatchTouchEvent(ev);
+			
+			mChildren.set(this, oldChildren);
+			mChildrenCount.set(this, oldChildrenCount);
+			
+			return result;
+		} catch (Exception e) {
 			return super.dispatchTouchEvent(ev);
 		}
-		
-		if (onInterceptTouchEvent(ev)) {
-			ev.setAction(MotionEvent.ACTION_CANCEL);
-			ev.setLocation(xf, yf);
-			target.dispatchTouchEvent(ev);
-			mMotionTarget = null;
-			return true;
-		}
-		
-		if (isUpOrCancel) {
-			mMotionTarget = null;
-		}
-		
-		ev.setLocation(xf, yf);
-		
-		return target.dispatchTouchEvent(ev);
 	}
 	
 	/**
@@ -926,7 +919,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
-		return mData.detachedFromList ? handleTouch(e, false) : super.onTouchEvent(e);
+		return mData.detachedFromList ? handleTouch(e, false) : false;
 	}
 	
 	/**
@@ -934,7 +927,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent e) {
-		return mData.detachedFromList ? handleTouch(e, true) : super.onInterceptTouchEvent(e);
+		return mData.detachedFromList ? handleTouch(e, true) : false;
 	}
 	
 	/**
@@ -942,6 +935,10 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public boolean performClick() {
+		if (!mData.detachedFromList) {
+			return super.performClick();
+		}
+		
 		if (mData.consumeClick) {
 			onViewSwipe(null, SwipeEvent.CLICK, 0, -1, null);
 			return true;
@@ -955,6 +952,10 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public boolean performLongClick() {
+		if (!mData.detachedFromList) {
+			return super.performLongClick();
+		}
+		
 		if (mStarted) {
 			return false;
 		} else if (mData.consumeLongClick) {
@@ -991,6 +992,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	public void addView(View child, int index) {
 		checkAddView();
 		mOverlayView = child;
+		mOverlayChild[0] = child;
 		super.addView(child, -1);
 	}
 	
@@ -1009,6 +1011,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	public void addView(View child, int index, ViewGroup.LayoutParams params) {
 		checkAddView();
 		mOverlayView = child;
+		mOverlayChild[0] = child;
 		super.addView(child, -1, params);
 	}
 	
@@ -1028,10 +1031,12 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 				mHiddenView.setDrawingCacheEnabled(false);
 				mHiddenViewCache.getLayoutParams().height = mHiddenView.getHeight();
 				mHiddenView = null;
+				mHiddenChild[0] = null;
 			}
 			
 			if (mOverlayView == view) {
 				mOverlayView = null;
+				mOverlayChild[0] = null;
 			}
 			
 			super.removeView(view);
@@ -1045,6 +1050,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	public void removeViewAt(int index) {
 		if (index != 0 && (mHiddenView == null || index > 1)) {
 			mOverlayView = null;
+			mOverlayChild[0] = null;
 			super.removeViewAt(index);
 		}
 	}
@@ -1058,6 +1064,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		if (mHiddenView != null && count > 2 || mHiddenView == null && count > 1) {
 			mOverlayView = null;
+			mOverlayChild[0] = null;
 			super.removeViewAt(count - 1);
 		}
 	}
@@ -1222,6 +1229,12 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		if (mHiddenView == null) {
 			mHiddenViewCache.getLayoutParams().height = 0;
 			mHiddenView = mData.getHiddenView();
+			
+			if (mHiddenView == null) {
+				throw new NullPointerException("getHiddenView() did return null");
+			}
+			
+			mHiddenChild[0] = mHiddenView;
 			
 			if (mHiddenView.getParent() != null) {
 				((ViewGroup) mHiddenView.getParent()).removeView(mHiddenView);
