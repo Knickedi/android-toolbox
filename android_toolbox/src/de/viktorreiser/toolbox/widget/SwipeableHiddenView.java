@@ -988,7 +988,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public void addView(View child) {
-		addView(child, -1);
+		addView(child, -1, null);
 	}
 	
 	/**
@@ -996,10 +996,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public void addView(View child, int index) {
-		checkAddView();
-		mOverlayView = child;
-		mOverlayChild[0] = child;
-		super.addView(child, -1);
+		super.addView(child, -1, null);
 	}
 	
 	/**
@@ -1007,7 +1004,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 	 */
 	@Override
 	public void addView(View child, ViewGroup.LayoutParams params) {
-		addView(child, -1, params);
+		addView(child, -1, null);
 	}
 	
 	/**
@@ -1018,7 +1015,8 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		checkAddView();
 		mOverlayView = child;
 		mOverlayChild[0] = child;
-		super.addView(child, -1, params);
+		super.addView(child, -1, new LayoutParams(
+				LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 	}
 	
 	/**
@@ -1247,7 +1245,7 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 			}
 			
 			super.addView(mHiddenView, 1, new LayoutParams(
-					LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		}
 	}
 	

@@ -95,7 +95,10 @@ public class SwipeableListView extends ListView implements OnScrollListener,
 	// PUBLIC =====================================================================================
 	
 	/**
-	 * Should any swipe be canceled if list loses focus (default {@code false}).
+	 * Should any swipe be canceled if list loses focus (default {@code false}).<br>
+	 * <br>
+	 * Focus loss happens e.g. when a dialog pops up. Maybe you wan't to perform something like
+	 * that when the user performs a (long) click.
 	 * 
 	 * @param cancel
 	 *            {@code true} if swipe should be canceled on focus loss
