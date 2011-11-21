@@ -727,13 +727,19 @@ public class SwipeableHiddenView extends FrameLayout implements SwipeableListIte
 		
 		case CLICK:
 		case LONG_CLICK:
-			if (mData.swipeDirection == SwipeDirection.LEFT) {
-				mOffset = -0.05f;
+			if (isHiddenViewCovered()) {
+				if (mData.swipeDirection == SwipeDirection.LEFT) {
+					mOffset = -0.01f;
+				} else {
+					mOffset = 0.01f;
+				}
+				requestLayout();
+				animate(true);
 			} else {
-				mOffset = 0.05f;
+				mOffset += mOffset > 0 ? -0.01f : 0.01f;
+				requestLayout();
+				animate(false);
 			}
-			requestLayout();
-			animate(true);
 			break;
 		}
 		
