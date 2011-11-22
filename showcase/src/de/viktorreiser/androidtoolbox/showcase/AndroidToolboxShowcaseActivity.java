@@ -14,6 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bugsense.trace.BugSenseHandler;
+
 /**
  * Showcase for android toolbox features.<br>
  * <br>
@@ -114,6 +116,8 @@ public class AndroidToolboxShowcaseActivity extends Activity implements OnItemCl
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		BugSenseHandler.setup(this, "00ef9ee6");
 		
 		ListView list = new ListView(this);
 		list.setOnItemClickListener(this);
