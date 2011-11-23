@@ -33,9 +33,10 @@ public class SwipeableListDetachedActivity extends Activity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		
-		setTitle(SwipeableShowcaseActivity.getActivityTitle(getClass()));
+		setTitle(SwipeableShowcaseActivity.getShowcaseTitle(getClass()));
 		setContentView(R.layout.swipeable_detached);
 		
+		// create a setup for the quick action swipeable
 		HiddenQuickActionSetup s1 = new HiddenQuickActionSetup(this);
 		s1.setDetachFromList(true);
 		s1.setSwipeOnLongClick(true);
@@ -51,6 +52,7 @@ public class SwipeableListDetachedActivity extends Activity {
 			}
 		});
 		
+		// create setup for custom hidden view swipeable
 		final HiddenColorTriggerSetup s2 = new HiddenColorTriggerSetup();
 		
 		mSwipeableHiddenView = (SwipeableHiddenView) findViewById(R.id.hidden_view);
@@ -63,6 +65,7 @@ public class SwipeableListDetachedActivity extends Activity {
 			}
 		});
 		
+		// we need the root view but we can't get it as long the activity didn't finished launching
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -73,6 +76,15 @@ public class SwipeableListDetachedActivity extends Activity {
 	
 	// PRIVATE ====================================================================================
 	
+	/**
+	 * Custom hidden view setup.<br>
+	 * <br>
+	 * The setup provides a hidden layout which provides some buttons to trigger the activity
+	 * background color. Depending on the set color we will hide the button which won't trigger a
+	 * change.
+	 * 
+	 * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+	 */
 	private class HiddenColorTriggerSetup extends HiddenViewSetup {
 		
 		private LinearLayout mHiddenLayout;
@@ -81,10 +93,12 @@ public class SwipeableListDetachedActivity extends Activity {
 			final Context context = SwipeableListDetachedActivity.this;
 			setDetachFromList(true);
 			
+			// create the hidden layout...
 			mHiddenLayout = new LinearLayout(context);
 			mHiddenLayout.setLayoutParams(new LayoutParams(
 					LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 			
+			// ... and add the needed buttons
 			for (int i = 0; i < 3; i++) {
 				Button b = new Button(context);
 				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -93,6 +107,8 @@ public class SwipeableListDetachedActivity extends Activity {
 				b.setLayoutParams(lp);
 				mHiddenLayout.addView(b);
 			}
+			
+			// setup the buttons in the layout
 			
 			((Button) mHiddenLayout.getChildAt(0)).setText("Red");
 			mHiddenLayout.getChildAt(0).setOnClickListener(new OnClickListener() {
@@ -125,16 +141,27 @@ public class SwipeableListDetachedActivity extends Activity {
 			});
 		}
 		
+		/**
+		 * Trigger to display all buttons so no button is hidden anymore.
+		 */
 		public void reset() {
 			mRootView.setBackgroundColor(0);
 			triggerInvisible(-1);
 		}
 		
+		/**
+		 * Callback of hidden view setup.
+		 */
 		@Override
 		public View getHiddenView() {
 			return mHiddenLayout;
 		}
 		
+		/**
+		 * Trigger a button to be invisible.
+		 * 
+		 * @param position 1-3 to hide the corresponding button (-1 to show all buttons).
+		 */
 		private void triggerInvisible(int position) {
 			for (int i = 0; i < mHiddenLayout.getChildCount(); i++) {
 				mHiddenLayout.getChildAt(i).setVisibility(i == position ? View.GONE : View.VISIBLE);

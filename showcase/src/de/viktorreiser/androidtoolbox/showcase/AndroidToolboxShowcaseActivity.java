@@ -1,18 +1,11 @@
 package de.viktorreiser.androidtoolbox.showcase;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.bugsense.trace.BugSenseHandler;
 
@@ -24,91 +17,37 @@ import com.bugsense.trace.BugSenseHandler;
  * 
  * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
  */
-public class AndroidToolboxShowcaseActivity extends Activity implements OnItemClickListener {
+public class AndroidToolboxShowcaseActivity extends Activity {
 	
 	// PRIVATE ====================================================================================
 	
-	private static final Class<?> [] mShowcaseActivities = new Class [] {
-			null,
-			SwipeableShowcaseActivity.class,
-			DrawableShowcaseActivity.class
-	};
-	
-	private static final String [] mShowcaseNames = new String [] {
-			"Information",
-			"Swipeable (list)",
-			"Custom drawables"
-	};
-	
-	private static final String [] mShowcaseDescriptions = new String [] {
-			"Some general information about this app",
-			"Demonstrates how to use a swipeable (list) item and it's implementations",
-			"Demonstrates the features of custom drawable implementations"
+	private static final Object [][] mShowcases = new Object [] [] {
+			new Object [] {
+					null,
+					"Information",
+					"Some general information about this app"
+			},
+			new Object [] {
+					SwipeableShowcaseActivity.class,
+					"Swipeable (list)",
+					"Demonstrates how to use a swipeable (list) item and it's implementations"
+			},
+			new Object [] {
+					DrawableShowcaseActivity.class,
+					"Custom drawables",
+					"Demonstrates the features of custom drawable implementations"
+			},
+			new Object [] {
+					WidgetShowcaseActivity.class,
+					"Custom widgets",
+					"Demonstrates custom widgets and how to use them"
+			}
 	};
 	
 	// PUBLIC =====================================================================================
 	
-	/**
-	 * Get activity title for a certain activity.
-	 * 
-	 * @param activityClass
-	 *            class of activity to get the title for
-	 * 
-	 * @return {@code title + " showcase"} or {@code null} if given class is not a category activity
-	 */
-	public static final String getActivityTitle(Class<?> activityClass) {
-		for (int i = 0; i < mShowcaseActivities.length; i++) {
-			if (activityClass.equals(mShowcaseActivities[i])) {
-				return mShowcaseNames[i] + " showcase";
-			}
-		}
-		
-		return null;
-	}
-	
-	
-	public static class ShowcaseAdapter extends BaseAdapter {
-		
-		private Context mmContext;
-		private String [] mmNames;
-		private String [] mmDescriptions;
-		
-		public ShowcaseAdapter(Context context, String [] names, String [] descriptions) {
-			mmContext = context;
-			mmNames = names;
-			mmDescriptions = descriptions;
-		}
-		
-		@Override
-		public int getCount() {
-			return mmNames.length;
-		}
-		
-		@Override
-		public Object getItem(int arg0) {
-			return null;
-		}
-		
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-		
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = ((LayoutInflater) mmContext
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-						.inflate(android.R.layout.simple_list_item_2, null);
-			}
-			
-			((TextView) convertView.findViewById(android.R.id.text1)).setText(
-					mmNames[position]);
-			((TextView) convertView.findViewById(android.R.id.text2)).setText(
-					mmDescriptions[position]);
-			
-			return convertView;
-		}
+	public static String getShowcaseTitle(Class<?> activityClass) {
+		return Showcase.getTitle(activityClass, mShowcases);
 	}
 	
 	// OVERRIDDEN =================================================================================
@@ -119,9 +58,20 @@ public class AndroidToolboxShowcaseActivity extends Activity implements OnItemCl
 		
 		BugSenseHandler.setup(this, "00ef9ee6");
 		
+		Showcase.Adapter adapter = new Showcase.Adapter(this, mShowcases) {
+			@Override
+			public void onItemClick(AdapterView<?> a, View v, int p, long id) {
+				if (p == 0) {
+					showInfo();
+				} else {
+					super.onItemClick(a, v, p, id);
+				}
+			}
+		};
+		
 		ListView list = new ListView(this);
-		list.setOnItemClickListener(this);
-		list.setAdapter(new ShowcaseAdapter(this, mShowcaseNames, mShowcaseDescriptions));
+		list.setOnItemClickListener(adapter);
+		list.setAdapter(adapter);
 		
 		setContentView(list);
 	}
@@ -131,15 +81,6 @@ public class AndroidToolboxShowcaseActivity extends Activity implements OnItemCl
 		showInfo();
 		
 		return false;
-	}
-	
-	@Override
-	public void onItemClick(AdapterView<?> a, View v, int p, long id) {
-		if (p == 0) {
-			showInfo();
-		} else {
-			startActivity(new Intent(this, mShowcaseActivities[p]));
-		}
 	}
 	
 	// PRIVATE ====================================================================================

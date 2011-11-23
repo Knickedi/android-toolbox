@@ -3,28 +3,35 @@ package de.viktorreiser.androidtoolbox.showcase;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ListView;
-import de.viktorreiser.androidtoolbox.showcase.drawable.StatusTextDrawableActivity;
+import de.viktorreiser.androidtoolbox.showcase.widget.CustomPreferenceActivity;
+import de.viktorreiser.androidtoolbox.showcase.widget.NumberPickerActivity;
 
 /**
- * List of custom drawable demonstrations.
+ * List of custom widget demonstrations.
  * 
  * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
  */
-public class DrawableShowcaseActivity extends Activity {
+public class WidgetShowcaseActivity extends Activity {
 	
 	// PRIVATE ====================================================================================
 	
 	private static final Object [][] mShowcases = new Object [] [] {
 			new Object [] {
-					StatusTextDrawableActivity.class,
-					"Status text",
-					"Scalable drawable which can be used for (e.g.) drawing and indicating a certain state"
+					NumberPickerActivity.class,
+					"Number picker",
+					"This demonstrates how to use and the features of the number picker port from android"
+			
+			},
+			new Object [] {
+					CustomPreferenceActivity.class,
+					"Custom preferences",
+					"Demonstration of custom preference implementations"
 			}
 	};
 	
 	// PUBLIC =====================================================================================
 	
-	public static final String getActivityTitle(Class<?> activityClass) {
+	public static final String getShowcaseTitle(Class<?> activityClass) {
 		return Showcase.getTitle(activityClass, mShowcases);
 	}
 	
@@ -38,10 +45,10 @@ public class DrawableShowcaseActivity extends Activity {
 		
 		Showcase.Adapter adapter = new Showcase.Adapter(this, mShowcases);
 		
-		ListView lv = new ListView(this);
-		lv.setOnItemClickListener(adapter);
-		lv.setAdapter(adapter);
+		ListView list = new ListView(this);
+		list.setOnItemClickListener(adapter);
+		list.setAdapter(adapter);
 		
-		setContentView(lv);
+		setContentView(list);
 	}
 }

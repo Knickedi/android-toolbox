@@ -48,7 +48,7 @@ public class SwipeableListQuickActionActivity extends Activity implements OnQuic
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle(SwipeableShowcaseActivity.getActivityTitle(this.getClass()));
+		setTitle(SwipeableShowcaseActivity.getShowcaseTitle(this.getClass()));
 		
 		setupQuickAction();
 		
@@ -57,6 +57,9 @@ public class SwipeableListQuickActionActivity extends Activity implements OnQuic
 		setContentView(listView);
 	}
 	
+	/**
+	 * React on quick action click.
+	 */
 	@Override
 	public void onQuickAction(AdapterView<?> parent, View view, int position, int quickActionId) {
 		switch (quickActionId) {
@@ -76,6 +79,9 @@ public class SwipeableListQuickActionActivity extends Activity implements OnQuic
 	
 	// PRIVATE ====================================================================================
 	
+	/**
+	 * Create a global quick action setup.
+	 */
 	private void setupQuickAction() {
 		mQuickActionSetup = new HiddenQuickActionSetup(this);
 		mQuickActionSetup.setOnQuickActionListener(this);
@@ -110,7 +116,11 @@ public class SwipeableListQuickActionActivity extends Activity implements OnQuic
 				"Copy URL to clipboard", R.drawable.quickaction_url);
 	}
 	
-	
+	/**
+	 * Adapter which creates the list items and initializes them with the quick action setup.
+	 * 
+	 * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+	 */
 	private class MyAdapter extends BaseAdapter {
 		
 		@Override

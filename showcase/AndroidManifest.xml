@@ -22,6 +22,7 @@
         <activity android:name=".InformationActivity" />
         <activity android:name=".SwipeableShowcaseActivity" />
         <activity android:name=".DrawableShowcaseActivity" />
+        <activity android:name=".WidgetShowcaseActivity" />
         
         <activity android:name=".swipeable.SwipeableListQuickActionActivity" />
         <activity android:name=".swipeable.SwipeableListQuickActionTypeActivity" />
@@ -29,6 +30,9 @@
         
         <activity android:name=".drawable.StatusTextDrawableActivity" />
         <activity android:name=".drawable.BubbleDrawableActivity" />
+        
+        <activity android:name=".widget.NumberPickerActivity" />
+        <activity android:name=".widget.CustomPreferenceActivity" />
 
     </application>
     

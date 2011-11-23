@@ -29,7 +29,7 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		setTitle(SwipeableShowcaseActivity.getActivityTitle(getClass()));
+		setTitle(SwipeableShowcaseActivity.getShowcaseTitle(getClass()));
 		
 		SwipeableListView listView = new SwipeableListView(this);
 		listView.setAdapter(new MyAdapter());
@@ -61,6 +61,13 @@ public class SwipeableListQuickActionTypeActivity extends Activity {
 		public static final int COPY = 2;
 	}
 	
+	/**
+	 * Custom adapter with two different quick action setups.<br>
+	 * <br>
+	 * We use the list view type to recycle the separate views for different quick action setups.
+	 * 
+	 * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+	 */
 	private class MyAdapter extends BaseAdapter {
 		
 		private HiddenQuickActionSetup mSetup1;

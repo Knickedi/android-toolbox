@@ -10,13 +10,18 @@ import de.viktorreiser.toolbox.graphics.drawable.BubbleDrawable;
 import de.viktorreiser.toolbox.graphics.drawable.BubbleDrawable.IndicatorDirection;
 import de.viktorreiser.toolbox.util.AndroidUtils;
 
+/**
+ * <b>NOT READY!</b>
+ * 
+ * @author Viktor Reiser &lt;<a href="mailto:viktorreiser@gmx.de">viktorreiser@gmx.de</a>&gt;
+ */
 @SuppressWarnings("unused")
 public class BubbleDrawableActivity extends Activity {
 	
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		setTitle(AndroidToolboxShowcaseActivity.getActivityTitle(this.getClass()));
+		setTitle(AndroidToolboxShowcaseActivity.getShowcaseTitle(getClass()));
 		
 		LinearLayout mainLayout = getLinearRowLayout();
 		mainLayout.setOrientation(LinearLayout.VERTICAL);

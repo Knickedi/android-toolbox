@@ -16,10 +16,14 @@ import de.viktorreiser.toolbox.util.AndroidUtils;
  */
 public class StatusTextDrawableActivity extends Activity {
 	
+	// OVERRIDDEN =================================================================================
+	
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		setTitle(DrawableShowcaseActivity.getActivityTitle(this.getClass()));
+		
+		// we will create a 2 (width) x 4 (height) grid and set the custom drawable to each view
 		
 		LinearLayout mainLayout = getLinearRowLayout();
 		mainLayout.setOrientation(LinearLayout.VERTICAL);
@@ -50,6 +54,24 @@ public class StatusTextDrawableActivity extends Activity {
 		setContentView(mainLayout);
 	}
 	
+	// PRIVATE ====================================================================================
+	
+	/**
+	 * Create a view which will have the status text drawable.<br>
+	 * <br>
+	 * Parameters relate to status text drawable methods.
+	 * 
+	 * @param text
+	 * @param square
+	 * @param textColor
+	 * @param strokeColor
+	 * @param fillColor
+	 * @param strokeWidth
+	 * @param cornerRadius
+	 * @param textPadding
+	 * 
+	 * @return view with status text drawable as background
+	 */
 	private View getStatusTextView(String text, boolean square, int textColor, int strokeColor,
 			int fillColor, float strokeWidth, float cornerRadius, float textPadding) {
 		StatusTextDrawable drawable = new StatusTextDrawable();
@@ -75,6 +97,11 @@ public class StatusTextDrawableActivity extends Activity {
 		return view;
 	}
 	
+	/**
+	 * Get row layout for demonstration UI (see onCreate).
+	 * 
+	 * @return row layout for two status text drawable views
+	 */
 	private LinearLayout getLinearRowLayout() {
 		LinearLayout row = new LinearLayout(this);
 		row.setOrientation(LinearLayout.HORIZONTAL);
