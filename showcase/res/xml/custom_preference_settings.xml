@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/de.viktorreiser.androidtoolbox.showcase" >
+
+    <PreferenceCategory android:title="Number Picker" >
+
+        <de.viktorreiser.toolbox.preference.NumberPickerPreference
+            android:defaultValue="25"
+            android:key="number_picker_num"
+            android:title="Number"
+            android:summary="Set a number 0 to 50"
+            android:orientation="horizontal"
+            custom:rangeStart="0"
+            custom:rangeEnd="50"
+            custom:speed="50" />
+        
+        <de.viktorreiser.toolbox.preference.NumberPickerPreference
+            android:defaultValue="5"
+            android:key="number_picker_days"
+            android:title="Day"
+            android:summary="Choose day name"
+            custom:speed="50"
+            custom:displayedValues="@array/days" />
+        
+    </PreferenceCategory>
+
+</PreferenceScreen>

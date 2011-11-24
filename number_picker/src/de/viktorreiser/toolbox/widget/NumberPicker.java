@@ -40,9 +40,11 @@ import android.widget.TextView;
 import de.viktorreiser.toolbox.R;
 
 /**
- * This (useful) class is available on every android platform but not for public access.<br>
+ * Number picker port from android source code (<b>Beta +</b>).<br>
  * <br>
+ * This (useful) class is available on every android platform but not for public access.<br>
  * So this is the original class pulled from android source code and improved for public use.<br>
+ * It's a view which contains a number field which can be increased and decreased by button press.<br>
  * <br>
  * Following custom XML attributes are available:<br>
  * <ul>
@@ -62,35 +64,41 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	
 	// PRIVATE ====================================================================================
 	
-	protected static final int DEFAULT_START = 0;
-	protected static final int DEFAULT_END = 200;
+	private static final int DEFAULT_START = 0;
+	private static final int DEFAULT_END = 100;
 	
+	private static final char [] DIGIT_CHARACTERS = new char [] {
+			'-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+	};
 	
-	private final Handler mHandler;
-	private final Runnable mRunnable = new Runnable() {
+	private final Handler mChangeHandler;
+	private final Runnable mChangeRunnable = new Runnable() {
 		@Override
 		public void run() {
 			if (mIncrement) {
 				changeCurrent(mCurrent + 1);
-				mHandler.postDelayed(this, mSpeed);
+				mChangeHandler.postDelayed(this, mSpeed);
 			} else if (mDecrement) {
 				changeCurrent(mCurrent - 1);
-				mHandler.postDelayed(this, mSpeed);
+				mChangeHandler.postDelayed(this, mSpeed);
 			}
 		}
 	};
+	
+	private NumberPickerButton mIncrementButton;
+	private NumberPickerButton mDecrementButton;
 	
 	private final EditText mText;
 	private final InputFilter mNumberInputFilter;
 	
 	private String [] mDisplayedValues;
-	protected int mStart;
-	protected int mEnd;
-	protected int mCurrent;
-	protected int mPrevious;
+	private int mStart;
+	private int mEnd;
+	private int mCurrent;
+	private int mPrevious;
 	private OnChangedListener mListener;
 	private Formatter mFormatter;
-	private long mSpeed = 300;
+	private long mSpeed = 200;
 	
 	private boolean mIncrement;
 	private boolean mDecrement;
@@ -106,7 +114,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	public interface OnChangedListener {
 		
 		/**
-		 * Number picker value change.
+		 * Number picker value changed.
 		 * 
 		 * @param picker
 		 *            number picker
@@ -127,7 +135,11 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	public interface Formatter {
 		
 		/**
-		 * Format number to display
+		 * Format number for UI.<br>
+		 * <br>
+		 * You you write a formatter which is displaying the numbers from {@code 1-1000} as
+		 * {@code 0001, 0324}. You could even define even use custom strings which represents the
+		 * number.
 		 * 
 		 * @param value
 		 *            value to display
@@ -136,26 +148,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		 */
 		String toString(int value);
 	}
-	
-	/**
-	 * Use a custom NumberPicker formatting callback to use two-digit minutes strings like "01".<br>
-	 * <br>
-	 * Keeping a static formatter is the most efficient way to do this. It avoids creating temporary
-	 * objects on every call to format().
-	 */
-	public static final Formatter TWO_DIGIT_FORMATTER = new NumberPicker.Formatter() {
-		final StringBuilder mBuilder = new StringBuilder();
-		final java.util.Formatter mFmt = new java.util.Formatter(mBuilder);
-		final Object [] mArgs = new Object [1];
-		
-		@Override
-		public String toString(int value) {
-			mArgs[0] = value;
-			mBuilder.delete(0, mBuilder.length());
-			mFmt.format("%02d", mArgs);
-			return mFmt.toString();
-		}
-	};
 	
 	
 	public NumberPicker(Context context) {
@@ -174,48 +166,40 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		mCurrent = mStart;
 		
 		boolean vertical = true;
+		int displayedValues = 0;
 		
 		if (attrs != null && !isInEditMode()) {
 			// this crashes in edit mode (?!)
 			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.NumberPicker);
 			
-			vertical = !"0".equals(a.getString(R.styleable.NumberPicker_android_orientation));
 			mStart = a.getInt(R.styleable.NumberPicker_rangeStart, DEFAULT_START);
 			mEnd = a.getInt(R.styleable.NumberPicker_rangeEnd, DEFAULT_END);
 			mSpeed = a.getInt(R.styleable.NumberPicker_speed, (int) mSpeed);
 			mCurrent = a.getInt(R.styleable.NumberPicker_current, mCurrent);
 			
-			if (mStart > mEnd) {
-				throw new IllegalArgumentException("rangetStart should be less equal rangeEnd");
-			} else if (mSpeed < 1) {
-				throw new IllegalArgumentException("speed should be greater zero");
-			} else if (mCurrent < mStart) {
-				mCurrent = mStart;
-			} else if (mCurrent > mEnd) {
-				mCurrent = mEnd;
+			String orientation = a.getString(R.styleable.NumberPicker_android_orientation);
+			displayedValues = a.getResourceId(R.styleable.NumberPicker_displayedValues, 0);
+			
+			if (orientation != null) {
+				vertical = !"0".equals(orientation);
 			}
 			
 			a.recycle();
-		}
-		
-		if (isInEditMode()) {
+		} else if (attrs != null && isInEditMode()) {
 			// fix orientation attribute for editor
-			vertical = "horizontal".equals(attrs.getAttributeValue(
-					"http://schemas.android.com/apk/res/android", "orientation"));
+			String orientation = attrs.getAttributeValue(
+					"http://schemas.android.com/apk/res/android", "orientation");
+			
+			if (orientation != null) {
+				vertical = !"horizontal".equals(orientation);
+			}
 		}
 		
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		// set a wrong orientation so our own orientation method will perform changes
+		super.setOrientation(!vertical ? VERTICAL : HORIZONTAL);
+		setOrientation(vertical ? VERTICAL : HORIZONTAL);
 		
-		if (vertical) {
-			setOrientation(VERTICAL);
-			inflater.inflate(R.layout.number_picker_vertical, this, true);
-		} else {
-			setOrientation(HORIZONTAL);
-			inflater.inflate(R.layout.number_picker_horizontal, this, true);
-		}
-		
-		mHandler = new Handler();
+		mChangeHandler = new Handler();
 		InputFilter inputFilter = new NumberPickerInputFilter();
 		mNumberInputFilter = new NumberRangeKeyListener();
 		mIncrementButton = (NumberPickerButton) findViewById(R.id.increment);
@@ -239,36 +223,41 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 			setEnabled(false);
 		}
 		
-		setCurrent(mCurrent);
+		if (displayedValues != 0) {
+			setDisplayedRange(mStart, displayedValues);
+		} else {
+			setRange(mStart, mEnd);
+		}
 	}
 	
 	/**
 	 * Set value change listener.
 	 * 
 	 * @param listener
-	 * 
-	 * @see OnChangedListener
+	 *            value change listener
 	 */
 	public void setOnChangeListener(OnChangedListener listener) {
 		mListener = listener;
 	}
 	
 	/**
-	 * Set value formatter.
+	 * Set value formatter.<br>
+	 * <br>
+	 * The formatter has no effect if you use {@link #setRange(int, int, String[])} or
+	 * {@link #setRange(int, int, int, String[])} as range definition. The default formatter will
+	 * display the current value as it is without modifying it.
 	 * 
 	 * @param formatter
-	 * 
-	 * @see Formatter
+	 *            formatter which creates a representation for a certain value
 	 */
 	public void setFormatter(Formatter formatter) {
 		mFormatter = formatter;
 	}
 	
 	/**
-	 * Set the range of numbers allowed for the number picker.<br>
+	 * Set the range.<br>
 	 * <br>
-	 * The current value will be automatically set to the start.<br>
-	 * Default range is {@value #DEFAULT_START} to {@value #DEFAULT_END}.
+	 * The current value will be set to start or end when it's too small or too big.
 	 * 
 	 * @param start
 	 *            the start of the range (inclusive)
@@ -281,97 +270,52 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	public void setRange(int start, int end) {
 		mStart = start;
 		mEnd = end;
-		mCurrent = start;
-		updateView();
-	}
-	
-	/**
-	 * Set the range of numbers allowed for the number picker.<br>
-	 * <br>
-	 * Default range is {@value #DEFAULT_START} to {@value #DEFAULT_END}.
-	 * 
-	 * @param start
-	 *            the start of the range (inclusive)
-	 * @param end
-	 *            the end of the range (inclusive)
-	 * @param current
-	 *            current value to set
-	 * 
-	 * @throws IllegalArgumentException
-	 *             {@code start > end}, {@code current < start} or {@code current > end}
-	 */
-	public void setRange(int start, int end, int current) {
-		mStart = start;
-		mEnd = end;
-		mCurrent = current;
-		updateView();
-	}
-	
-	/**
-	 * Set the range of numbers allowed for the number picker.<br>
-	 * <br>
-	 * The current value will be automatically set to the start.
-	 * 
-	 * @param start
-	 *            the start of the range (inclusive)
-	 * @param end
-	 *            the end of the range (inclusive)
-	 * @param displayedValues
-	 *            the values displayed to the user ({@code null} will reset displayed values and
-	 *            display numbers again)
-	 * 
-	 * @throws IllegalArgumentException
-	 *             {@code start > end || start < -1 || end >= displayedValues.length}
-	 */
-	public void setRange(int start, int end, String [] displayedValues) {
-		if (displayedValues == null) {
-			mDisplayedValues = displayedValues;
-			setRange(start, end);
-		} else {
-			if (start > end || start < -1 || end >= displayedValues.length) {
-				throw new IllegalArgumentException();
-			}
-			
-			mDisplayedValues = displayedValues;
-			mStart = start;
-			mEnd = end;
-			mCurrent = start;
-			updateView();
+		
+		if (mStart > mEnd) {
+			throw new IllegalArgumentException("start should be less equal end");
 		}
+		
+		setCurrent(mCurrent);
 	}
 	
 	/**
-	 * Set the range of numbers allowed for the number picker.
+	 * Set the range with corresponding UI mapped values.
 	 * 
 	 * @param start
-	 *            the start of the range (inclusive)
-	 * @param end
-	 *            the end of the range (inclusive)
-	 * @param current
-	 *            current value to set
+	 *            value of first entry
+	 * @param stringArrayResId
+	 *            resource ID for string array to display
+	 * 
+	 * @see #setDisplayedRange(int, String[])
+	 */
+	public void setDisplayedRange(int start, int stringArrayResId) {
+		setDisplayedRange(start, getContext().getResources().getStringArray(stringArrayResId));
+	}
+	
+	/**
+	 * Set the range with corresponding UI mapped values.<br>
+	 * <br>
+	 * E.g. you have an array {@code ("a","b","c")} and a start value of 3 you'll get the values
+	 * {@code (3, 4, 5)} internally but the given strings will be displayed to the user.
+	 * {@link #setCurrent(int)} will accept also {@code (3, 4, 5)} and not {@code (0, 1, 2)}. You
+	 * can iterate day names, month names or anything else like that.
+	 * 
+	 * @param start
+	 *            value of first entry
 	 * @param displayedValues
-	 *            the values displayed to the user ({@code null} will reset displayed values and
-	 *            display numbers again)
+	 *            the values displayed to the user
 	 * 
 	 * @throws IllegalArgumentException
-	 *             {@code start > end || current < start || current > end || start < -1 ||}
-	 *             {@code end >= displayedValues.length}
+	 *             {@code displayedValues.length == 0}
 	 */
-	public void setRange(int start, int end, int current, String [] displayedValues) {
-		if (displayedValues == null) {
-			mDisplayedValues = displayedValues;
-			setRange(start, end, current);
+	public void setDisplayedRange(int start, String [] displayedValues) {
+		if (displayedValues.length == 0) {
+			throw new IllegalArgumentException("displayedValues length is 0");
 		} else {
-			if (start > end || current < start || current > end || start < -1
-					|| end >= displayedValues.length) {
-				throw new IllegalArgumentException();
-			}
-			
 			mDisplayedValues = displayedValues;
 			mStart = start;
-			mEnd = end;
-			mCurrent = start;
-			updateView();
+			mEnd = start + displayedValues.length - 1;
+			setCurrent(mCurrent);
 		}
 	}
 	
@@ -379,17 +323,18 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	 * Set current value.
 	 * 
 	 * @param current
-	 *            current value to set
-	 * 
-	 * @throws IllegalArgumentException
-	 *             {@code current < start || current > end}
+	 *            current value to set - start or end will be used if given value is less the start
+	 *            or greater then end
 	 */
 	public void setCurrent(int current) {
-		if (current < mStart || current > mEnd) {
-			throw new IllegalArgumentException();
+		mCurrent = current;
+		
+		if (mCurrent < mStart) {
+			mCurrent = mStart;
+		} else if (mCurrent > mEnd) {
+			mCurrent = mEnd;
 		}
 		
-		mCurrent = current;
 		updateView();
 	}
 	
@@ -405,7 +350,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	/**
 	 * Set Scroll speed of numbers when +/- buttons are long pressed.<br>
 	 * <br>
-	 * Default is 300ms (per value).
+	 * Default is 200ms (per value).
 	 * 
 	 * @param speed
 	 *            scroll speed in milliseconds
@@ -414,6 +359,21 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		mSpeed = speed;
 	}
 	
+	// PACKAGE ====================================================================================
+	
+	/**
+	 * Cancel increment handler (when increment button clicked).
+	 */
+	void cancelIncrement() {
+		mIncrement = false;
+	}
+	
+	/**
+	 * Cancel decrement handler (when decrement button clicked).
+	 */
+	void cancelDecrement() {
+		mDecrement = false;
+	}
 	
 	/**
 	 * This class exists purely to cancel long click events.
@@ -490,7 +450,10 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	// OVERRIDDEN =================================================================================
 	
 	/**
-	 * <i>Overridden for internal use!</i>
+	 * Set the orientation of the number picker.
+	 * 
+	 * @param orientation
+	 *            {@link LinearLayout#VERTICAL} or {@link LinearLayout#HORIZONTAL}
 	 */
 	@Override
 	public void setOrientation(int orientation) {
@@ -523,7 +486,30 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		mText.setEnabled(enabled);
 	}
 	
-	// PRIVATE ====================================================================================
+	/**
+	 * <i>Overridden for internal use!</i>
+	 */
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		if (!hasFocus) {
+			validateInput(v);
+		}
+	}
+	
+	/**
+	 * <i>Overridden for internal use!</i>
+	 */
+	@Override
+	public boolean onLongClick(View v) {
+		if (R.id.increment == v.getId()) {
+			mIncrement = true;
+			mChangeHandler.post(mChangeRunnable);
+		} else if (R.id.decrement == v.getId()) {
+			mDecrement = true;
+			mChangeHandler.post(mChangeRunnable);
+		}
+		return true;
+	}
 	
 	/**
 	 * <i>Overridden for internal use!</i>
@@ -534,7 +520,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		if (!mText.hasFocus())
 			mText.requestFocus();
 		
-		// now perform the increment/decrement
 		if (R.id.increment == v.getId()) {
 			changeCurrent(mCurrent + 1);
 		} else if (R.id.decrement == v.getId()) {
@@ -542,20 +527,15 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		}
 	}
 	
-	private String formatNumber(int value) {
-		return (mFormatter != null)
-				? mFormatter.toString(value)
-				: String.valueOf(value);
-	}
+	// PRIVATE ====================================================================================
 	
 	private void changeCurrent(int current) {
-		
-		// Wrap around the values if we go past the start or end
 		if (current > mEnd) {
 			current = mStart;
 		} else if (current < mStart) {
 			current = mEnd;
 		}
+		
 		mPrevious = mCurrent;
 		mCurrent = current;
 		
@@ -570,12 +550,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	}
 	
 	private void updateView() {
-		/*
-		 * If we don't have displayed values then use the current number else find the correct value
-		 * in the displayed values for the current number.
-		 */
 		if (mDisplayedValues == null) {
-			mText.setText(formatNumber(mCurrent));
+			mText.setText(mFormatter != null
+					? mFormatter.toString(mCurrent) : String.valueOf(mCurrent));
 		} else {
 			mText.setText(mDisplayedValues[mCurrent - mStart]);
 		}
@@ -584,6 +561,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	
 	private void validateCurrentView(CharSequence str) {
 		int val = getSelectedPos(str.toString());
+		
 		if ((val >= mStart) && (val <= mEnd)) {
 			if (mCurrent != val) {
 				mPrevious = mCurrent;
@@ -591,93 +569,67 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 				notifyChange();
 			}
 		}
+		
 		updateView();
 	}
 	
-	/**
-	 * <i>Overridden for internal use!</i>
-	 */
-	@Override
-	public void onFocusChange(View v, boolean hasFocus) {
-		/*
-		 * When focus is lost check that the text field has valid values.
-		 */
-		if (!hasFocus) {
-			validateInput(v);
+	private int getSelectedPos(String str) {
+		if (mDisplayedValues == null) {
+			if (mFormatter != null) {
+				return mCurrent;
+			} else {
+				try {
+					return Integer.parseInt(str);
+				} catch (Exception e) {
+				}
+			}
+		} else {
+			for (int i = 0; i < mDisplayedValues.length; i++) {
+				str = str.toLowerCase();
+				if (mDisplayedValues[i].toLowerCase().startsWith(str)) {
+					return mStart + i;
+				}
+			}
+			
+			try {
+				return Integer.parseInt(str);
+			} catch (NumberFormatException e) {
+			}
 		}
+		
+		return mCurrent;
 	}
 	
 	private void validateInput(View v) {
 		String str = String.valueOf(((TextView) v).getText());
+		
 		if ("".equals(str)) {
-			
-			// Restore to the old value as we don't allow empty values
 			updateView();
 		} else {
-			
-			// Check the new value and ensure it's in range
 			validateCurrentView(str);
 		}
 	}
 	
-	/**
-	 * <i>Overridden for internal use!</i>
-	 */
-	@Override
-	public boolean onLongClick(View v) {
-		
-		/*
-		 * The text view may still have focus so clear it's focus which will trigger the on focus
-		 * changed and any typed values to be pulled.
-		 */
-		mText.clearFocus();
-		
-		if (R.id.increment == v.getId()) {
-			mIncrement = true;
-			mHandler.post(mRunnable);
-		} else if (R.id.decrement == v.getId()) {
-			mDecrement = true;
-			mHandler.post(mRunnable);
-		}
-		return true;
-	}
-	
-	/**
-	 * Cancel increment handler (when increment button clicked).
-	 */
-	public void cancelIncrement() {
-		mIncrement = false;
-	}
-	
-	/**
-	 * Cancel decrement handler (when decrement button clicked).
-	 */
-	public void cancelDecrement() {
-		mDecrement = false;
-	}
-	
-	private static final char [] DIGIT_CHARACTERS = new char [] {
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-	};
-	
-	private NumberPickerButton mIncrementButton;
-	private NumberPickerButton mDecrementButton;
 	
 	private class NumberPickerInputFilter implements InputFilter {
 		@Override
 		public CharSequence filter(CharSequence source, int start, int end,
 				Spanned dest, int dstart, int dend) {
 			if (mDisplayedValues == null) {
-				return mNumberInputFilter.filter(source, start, end, dest, dstart, dend);
+				if (mFormatter != null) {
+					return null;
+				} else {
+					return mNumberInputFilter.filter(source, start, end, dest, dstart, dend);
+				}
 			}
+			
 			CharSequence filtered = String.valueOf(source.subSequence(start, end));
 			String result = String.valueOf(dest.subSequence(0, dstart))
-					+ filtered
-					+ dest.subSequence(dend, dest.length());
+					+ filtered + dest.subSequence(dend, dest.length());
 			String str = String.valueOf(result).toLowerCase();
+			
 			for (String val : mDisplayedValues) {
-				val = val.toLowerCase();
-				if (val.startsWith(str)) {
+				if (val.toLowerCase().startsWith(str)) {
 					return filtered;
 				}
 			}
@@ -687,8 +639,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 	
 	private class NumberRangeKeyListener extends NumberKeyListener {
 		
-		// This doesn't allow for range limits when controlled by a
-		// soft input method!
 		@Override
 		public int getInputType() {
 			return InputType.TYPE_CLASS_NUMBER;
@@ -702,58 +652,24 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 		@Override
 		public CharSequence filter(CharSequence source, int start, int end,
 				Spanned dest, int dstart, int dend) {
-			
 			CharSequence filtered = super.filter(source, start, end, dest, dstart, dend);
+			
 			if (filtered == null) {
 				filtered = source.subSequence(start, end);
 			}
 			
 			String result = String.valueOf(dest.subSequence(0, dstart))
-					+ filtered
-					+ dest.subSequence(dend, dest.length());
+					+ filtered + dest.subSequence(dend, dest.length());
 			
 			if ("".equals(result)) {
 				return result;
+			} else if ("-".equals(result)) {
+				return mStart < 0 ? null : "";
 			}
+			
 			int val = getSelectedPos(result);
 			
-			/*
-			 * Ensure the user can't type in a value greater than the max allowed. We have to allow
-			 * less than min as the user might want to delete some numbers and then type a new
-			 * number.
-			 */
-			if (val > mEnd) {
-				return "";
-			} else {
-				return filtered;
-			}
+			return mEnd >= -1 && val > mEnd || mStart <= 1 && val < mStart ? "" : filtered;
 		}
-	}
-	
-	private int getSelectedPos(String str) {
-		if (mDisplayedValues == null) {
-			return Integer.parseInt(str);
-		} else {
-			for (int i = 0; i < mDisplayedValues.length; i++) {
-				
-				/* Don't force the user to type in jan when ja will do */
-				str = str.toLowerCase();
-				if (mDisplayedValues[i].toLowerCase().startsWith(str)) {
-					return mStart + i;
-				}
-			}
-			
-			/*
-			 * The user might have typed in a number into the month field i.e. 10 instead of OCT so
-			 * support that too.
-			 */
-			try {
-				return Integer.parseInt(str);
-			} catch (NumberFormatException e) {
-				
-				/* Ignore as if it's not a number we don't care */
-			}
-		}
-		return mStart;
 	}
 }

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/de.viktorreiser.androidtoolbox.showcase"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="You can use the input field too, it will try to find the best matching value or resotre the last valid one" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Ordinary number picker with 1 to 100 range" />
+
+        <de.viktorreiser.toolbox.widget.NumberPicker
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            custom:current="50"
+            custom:rangeEnd="100"
+            custom:rangeStart="1"
+            custom:speed="50" >
+        </de.viktorreiser.toolbox.widget.NumberPicker>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Horizontal style number picker with -10 to 10 range " />
+
+        <de.viktorreiser.toolbox.widget.NumberPicker
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            custom:current="0"
+            android:orientation="horizontal"
+            custom:rangeEnd="10"
+            custom:rangeStart="-10" >
+        </de.viktorreiser.toolbox.widget.NumberPicker>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Range 0 to 20 formatted as squared value represented by 3 digits (so leading zeros) - note that a numper picker with a formatter won&apos;t accept any manual input" />
+
+        <de.viktorreiser.toolbox.widget.NumberPicker
+            android:id="@+id/square_number_picker"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            custom:current="0"
+            android:orientation="horizontal"
+            custom:rangeEnd="20"
+            custom:rangeStart="0" >
+        </de.viktorreiser.toolbox.widget.NumberPicker>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Custom values given by a resource array - the internal values start with 2 (Monday)" />
+
+        <de.viktorreiser.toolbox.widget.NumberPicker
+            android:id="@+id/day_number_picker"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            custom:current="4"
+            custom:rangeStart="2"
+            custom:displayedValues="@array/days" >
+        </de.viktorreiser.toolbox.widget.NumberPicker>
+
+        <TextView
+            android:id="@+id/day_number_picker_value"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="Current day value:" />
+        
+    </LinearLayout>
+
+</ScrollView>

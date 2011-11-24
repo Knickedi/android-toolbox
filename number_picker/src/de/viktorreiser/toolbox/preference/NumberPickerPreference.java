@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import de.viktorreiser.toolbox.widget.NumberPicker;
 
 /**
- * Integer number preference.<br>
+ * Integer number preference (<b>Beta +</b>).<br>
  * <br>
  * XML attributes will be delegated to {@link NumberPicker}.<br>
  * <b>Note</b>: This preference persists an {@code Integer} not a {@code String}.<br>

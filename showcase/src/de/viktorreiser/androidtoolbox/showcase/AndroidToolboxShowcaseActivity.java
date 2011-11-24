@@ -56,7 +56,16 @@ public class AndroidToolboxShowcaseActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		BugSenseHandler.setup(this, "00ef9ee6");
+		// use bugsense to send crash reports
+		
+		// release debug key
+		// Don't use this while working on code. It's there for release so we know that someone
+		// produced a crash on a released version. When modifying the code here use the testing key,
+		// we don't want bugs you produced your self.
+		// BugSenseHandler.setup(this, "00ef9ee6");
+		
+		// testing debug key
+		BugSenseHandler.setup(this, "642cb855");
 		
 		Showcase.Adapter adapter = new Showcase.Adapter(this, mShowcases) {
 			@Override
